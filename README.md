@@ -1,15 +1,21 @@
-# XCrypto: a cryptographic ISE for RISC-V
+# The XCrypto ISE Specification
 
 *This project describes a complete Instruction Set Extension (ISE) for the
-RISC-V architecture for accelerating cryptographic workloads. It is
-accompanied by an area-optimised implementation of the ISE, which acts as
-a co-processor. An example integration of the co-processor with the PicoRV32
-CPU core is included.*
+RISC-V architecture for accelerating cryptographic workloads.*
 
-This project contains the ISE specification document.
+This repository contains the ISE specification document.
+Pre-built versions of the specification can be found on the
+[releases](https://github.com/scarv/xcrypto-spec/releases)
+page.
+
+Alternatively, you can build them from source yourself with the following
+commands:
 
 ```sh
 $> git clone git@github.com:scarv/xcrypto-spec.git
 $> git submodule update --init --recursive
 $> make docs
 ```
+An explanation of the broader XCrypto project and it's organisation
+can be found in the [scarv/xcrypto](https://github.com/scarv/xcrypto)
+repository.
