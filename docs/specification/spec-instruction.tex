@@ -1383,41 +1383,42 @@ General Purpose Registers, rather than the \XCID Registers.
 \XCINSTR{xc.sha3.xy}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][rs1]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][rs2]_{4 \RANGE 0} $ \;
-    $ \GPR[*][crd] \ASN ((x\%5) + 5*(y\%5)) \LSH shamt $ \;
+    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
+    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
+    $ shamt \ASN \VERB[RV]{b0} $ \;
+    $ \GPR[*][{\VERB[RV]{rd}}] \ASN ((x\%5) + 5*(y\%5)) \LSH shamt $ \;
 }
 
 \XCINSTR{xc.sha3.x1}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][rs1]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][rs2]_{4 \RANGE 0} $ \;
-    $ \GPR[*][crd] \ASN (((x+1)\%5) + 5*(y\%5)) \LSH shamt $ \;
+    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
+    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
+    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+1)\%5) + 5*(y\%5)) \LSH shamt $ \;
 }
 
 \XCINSTR{xc.sha3.x2}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][rs1]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][rs2]_{4 \RANGE 0} $ \;
-    $ \GPR[*][crd] \ASN (((x+2)\%5) + 5*(y\%5)) \LSH shamt $ \;
+    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
+    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
+    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+2)\%5) + 5*(y\%5)) \LSH shamt $ \;
 }
 
 \XCINSTR{xc.sha3.x4}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][rs1]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][rs2]_{4 \RANGE 0} $ \;
-    $ \GPR[*][crd] \ASN (((x+4)\%5) + 5*(y\%5)) \LSH shamt $ \;
+    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
+    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
+    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+4)\%5) + 5*(y\%5)) \LSH shamt $ \;
 }
 
 \XCINSTR{xc.sha3.yx}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][rs1]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][rs2]_{4 \RANGE 0} $ \;
-    $ \GPR[*][crd] \ASN (((y)\%5) + 5*((2*x+3*y)\%5)) \LSH shamt $ \;
+    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
+    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
+    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((y)\%5) + 5*((2*x+3*y)\%5)) \LSH shamt $ \;
 }
 
 % =============================================================================
