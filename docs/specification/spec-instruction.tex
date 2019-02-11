@@ -1283,7 +1283,7 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 \subsubsection{Class-$3.1$: AES}
 \label{sec:spec:instruction:3:1}
 
-\XCINSTR{xc.aessub}{mode, rot, crd, crs1, crs2}{
+\XCINSTR{xc.aessub}{.\[enc,dec\]\[rot\] crd, crs1, crs2}{
   Per~\cite[Figures 5]{SCARV:TilGro:06}, 
   apply a (carefully structured) form of the AES 
   {\tt SubBytes}~\cite[Section 5.1.1]{SCARV:FIPS:197}
