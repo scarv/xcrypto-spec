@@ -1,6 +1,6 @@
-[submodule "external/riscv-opcodes"]
-	path = external/riscv-opcodes
+[submodule "ext/riscv-opcodes"]
+	path = ext/riscv-opcodes
 	url = https://github.com/scarv/riscv-opcodes.git
-[submodule "external/texmf"]
-	path = external/texmf
+[submodule "ext/texmf"]
+	path = ext/texmf
 	url = https://github.com/scarv/texmf.git
