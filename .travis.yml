@@ -1,7 +1,9 @@
 sudo: required
 dist: cosmic
 before_install:
-- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+- sudo apt-get -qq update 
+- sudo apt-get install -y --no-install-recommends texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+- sudo apt-get install -y --no-install-recommends xzdec
 script:
 - source ./bin/conf.sh 
 - tlmgr init-usertree
