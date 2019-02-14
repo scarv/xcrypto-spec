@@ -45,8 +45,8 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ld.bu}{crd, h, b, imm11(rs1)}{
-  Load a     byte from memory
-  into a specific     byte of an $\XCR$ register.
+  Load a      byte from memory
+  into a specific      byte of an $\XCR$ register.
   If \VERB[RV]{h} or \VERB[RV]{b} are non-zero,
   the other bytes in the destination register are left un-modified.
   If \VERB[RV]{h} and \VERB[RV]{b} are zero,
@@ -67,13 +67,13 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ld.hu}{crd, h,    imm11(rs1)}{
-  Load a halfword from memory
-  into a specific halfword of an $\XCR$ register,
+  Load a half-word from memory
+  into a specific half-word of an $\XCR$ register,
   If \VERB[RV]{h} is non-zero,
-  the low halfword of the destination register is left un-modified.
+  the low half-word of the destination register is left un-modified.
   If \VERB[RV]{h} is zero,
-  the least-significant halfword of the destination register
-  is set to the loaded halfword, and all other halfwords in the
+  the least-significant half-word of the destination register
+  is set to the loaded half-word, and all other half-words in the
   destination register are cleared.
 }{
   $addr                                                                    \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
@@ -121,7 +121,7 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.st.h} {rs2, h,    imm11(rs1)}{
-  Store a specific halfword of an $\XCR$ register into memory.
+  Store a specific half-word of an $\XCR$ register into memory.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm11} = \VERB[RV]{imm11hi} \CONS \VERB[RV]{imm11lo} .
@@ -261,14 +261,14 @@ to exceptions.
 
 \XCINSTR{xc.scatter.h}{crd, crs2, rs1}{
   Perform a ``scattered'' store of 
-  two  halfwords
+  two  half-words
   from an $\XCR$ register
   into memory;
   for the $i$-th store, a base-offset style effective address is formed 
   from a
                     a  $\GPR$ register (the   base)
   plus
-  a halfword within an $\XCR$ register (the offset).
+  a half-word within an $\XCR$ register (the offset).
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\XCR[*][{\VERB[RV]{crs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\XCR[*][{\VERB[RV]{crs2}}]}{1}$ \;
@@ -305,14 +305,14 @@ to exceptions.
 
 \XCINSTR{xc.gather.h}{crd, crs2, rs1}{
   Perform a  ``gathered''  load of 
-  two  halfwords
+  two  half-words
   from memory 
   into an $\XCR$ register;
   for the $i$-th  load, a base-offset style effective address is formed 
   from a
                     a  $\GPR$ register (the   base)
   plus
-  a halfword within an $\XCR$ register (the offset).
+  a half-word within an $\XCR$ register (the offset).
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\XCR[*][{\VERB[RV]{crs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\XCR[*][{\VERB[RV]{crs2}}]}{1}$ \;
@@ -328,9 +328,9 @@ to exceptions.
 \label{sec:spec:instruction:2:3}
 
 \XCINSTR{xc.ld.liu}{crd, imm16}{
-  Load an immediate halfword
-  into the lower (or least-significant) halfword of an $\XCR$ register, 
-  leaving the other halfword in said register un-modified.
+  Load an immediate half-word
+  into the lower (or least-significant) half-word of an $\XCR$ register, 
+  leaving the other half-word in said register un-modified.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm16} = \VERB[RV]{imm11} \CONS \VERB[RV]{imm5} .
@@ -342,9 +342,9 @@ to exceptions.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ld.hiu}{crd, imm16}{
-  Load an immediate halfword
-  into the upper (or  most-significant) halfword of an $\XCR$ register, 
-  leaving the other halfword in said register un-modified.
+  Load an immediate half-word
+  into the upper (or  most-significant) half-word of an $\XCR$ register, 
+  leaving the other half-word in said register un-modified.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm16} = \VERB[RV]{imm11} \CONS \VERB[RV]{imm5} .
@@ -846,8 +846,8 @@ is considered invalid.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.pperm.w}{crd, crs1, b0, b1, b2, b3}{
-  Permute bytes   of               some $\XCR$ register,
-  storing the result in               another $\XCR$ register.
+  Permute bytes   of                some $\XCR$ register,
+  storing the result in                another $\XCR$ register.
 }{
   $t \ASN            \XCR[*][{\VERB[RV]{crs1}}]               $ \;
   $           \XCR[*][{\VERB[RV]{crd}}]                \ASN \INDEX[ 8]{t}{\VERB[RV]{b3}} \CONS
@@ -859,8 +859,8 @@ is considered invalid.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.pperm.hx}{crd, crs1, b0, b1, b2, b3}{
-  Permute nibbles of a halfword in some $\XCR$ register,
-  storing the result in a halfword of another $\XCR$ register.
+  Permute nibbles of a half-word in some $\XCR$ register,
+  storing the result in a half-word of another $\XCR$ register.
   Note that the index 
   $
   \VERB[RV]{x} \in \SET{ 0, 1 }
@@ -877,8 +877,8 @@ is considered invalid.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.pperm.bx}{crd, crs1, b0, b1, b2, b3}{
-  Permute crumbs  of a byte     in some $\XCR$ register,
-  storing the result in a byte     of another $\XCR$ register.
+  Permute crumbs  of a byte      in some $\XCR$ register,
+  storing the result in a byte      of another $\XCR$ register.
   Note that the index 
   $
   \VERB[RV]{x} \in \SET{ 0, 1, 2, 3 }
@@ -1372,16 +1372,22 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 \subsubsection{Class-$3.2$: SHA3}
 \label{sec:spec:instruction:3:2}
 
-All SHA3 instructions include a 2-bit immediate {\tt shamt} value, which can
-be used to align the result to a byte, halfword, word or double word memory
-address boundary. This means the instructions can be used to accelerate all
-FIPS standardised sizes of the Keccak function.
+Each instruction in this class computes an index into the SHA3 state array:
+they provide domain-specific support for address generation within the step
+mappings~\cite[Section 3.2]{SCARV:FIPS:202} (i.e., $\Omega$, $\rho$, $\pi$, 
+$\chi$, and $\iota$) that constitute each round.  Note that
 
-Note these instructions source and sink values in the standard RISC-V
-General Purpose Registers, rather than the \XCID Registers.
+\begin{itemize}
+\item the $2$-bit immediate \VERB[RV]{shamt} can be used align the index 
+      to a byte, half-word, word, or double-word boundary 
+      (and thereby support all SHA3 parameterisations), 
+      and
+\item the instructions use $\GPR$ rather than $\XCR$: this is explained by
+      their focus on addressing, vs. computation per se.
+\end{itemize}
 
 \XCINSTR{xc.sha3.xy}{rd, rs1, rs2, shamt}{
-  Used to compute indexes into a SHA3 state array.
+  Compute an index into the SHA3 state array.
 }{
   $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
   $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
@@ -1389,7 +1395,7 @@ General Purpose Registers, rather than the \XCID Registers.
 }
 
 \XCINSTR{xc.sha3.x1}{rd, rs1, rs2, shamt}{
-  Used to compute indexes into a SHA3 state array.
+  Compute an index into the SHA3 state array.
 }{
   $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
   $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
@@ -1397,7 +1403,7 @@ General Purpose Registers, rather than the \XCID Registers.
 }
 
 \XCINSTR{xc.sha3.x2}{rd, rs1, rs2, shamt}{
-  Used to compute indexes into a SHA3 state array.
+  Compute an index into the SHA3 state array.
 }{
   $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
   $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
@@ -1405,7 +1411,7 @@ General Purpose Registers, rather than the \XCID Registers.
 }
 
 \XCINSTR{xc.sha3.x4}{rd, rs1, rs2, shamt}{
-  Used to compute indexes into a SHA3 state array.
+  Compute an index into the SHA3 state array.
 }{
   $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
   $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
@@ -1413,7 +1419,7 @@ General Purpose Registers, rather than the \XCID Registers.
 }
 
 \XCINSTR{xc.sha3.yx}{rd, rs1, rs2, shamt}{
-  Used to compute indexes into a SHA3 state array.
+  Compute an index into the SHA3 state array.
 }{
   $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
   $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
