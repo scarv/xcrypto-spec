@@ -1,5 +1,7 @@
 # [XCrypto](https://github.com/scarv/xcrypto): specification
 
+<!--- -------------------------------------------------------------------- --->
+
 [![Build Status](https://travis-ci.com/scarv/xcrypto-spec.svg)](https://travis-ci.com/scarv/xcrypto-spec)
 [![Documentation](https://codedocs.xyz/scarv/xcrypto-spec.svg)](https://codedocs.xyz/scarv/xcrypto-spec)
 
