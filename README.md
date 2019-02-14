@@ -1,4 +1,9 @@
-# The XCrypto ISE Specification
+# [XCrypto](https://github.com/scarv/xcrypto): specification
+
+[![Build Status](https://travis-ci.com/scarv/xcrypto-spec.svg)](https://travis-ci.com/scarv/xcrypto-spec)
+[![Documentation](https://codedocs.xyz/scarv/xcrypto-spec.svg)](https://codedocs.xyz/scarv/xcrypto-spec)
+
+<!--- -------------------------------------------------------------------- --->
 
 *This project describes a complete Instruction Set Extension (ISE) for the
 RISC-V architecture for accelerating cryptographic workloads.*
