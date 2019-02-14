@@ -13,9 +13,12 @@ commands:
 
 ```sh
 $> git clone git@github.com:scarv/xcrypto-spec.git
+$> cd ./xcrypto-spec
 $> git submodule update --init --recursive
+$> source ./bin/conf.sh
 $> make docs
 ```
+
 An explanation of the broader XCrypto project and it's organisation
 can be found in the [scarv/xcrypto](https://github.com/scarv/xcrypto)
 repository.
