@@ -1313,21 +1313,21 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   $\VERB[RV]{rot}$  is encoded in the $\VERB[RV]{cb}$ field.
 }{
   \eIf{$\VERB[RV]{mode} = 0$}{
-    $t_0                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][\OPER{crs1}]_{ 7 \RANGE  0} )$ \;
-    $t_1                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][\OPER{crs2}]_{15 \RANGE  8} )$ \;
-    $t_2                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][\OPER{crs1}]_{23 \RANGE 16} )$ \;
-    $t_3                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][\OPER{crs2}]_{31 \RANGE 24} )$ \;
+    $t_0                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][{\VERB[RV]{crs1}}]_{ 7 \RANGE  0} )$ \;
+    $t_1                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][{\VERB[RV]{crs2}}]_{15 \RANGE  8} )$ \;
+    $t_2                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][{\VERB[RV]{crs1}}]_{23 \RANGE 16} )$ \;
+    $t_3                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \XCR[*][{\VERB[RV]{crs2}}]_{31 \RANGE 24} )$ \;
   }{
-    $t_0                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][\OPER{crs1}]_{ 7 \RANGE  0} )$ \;
-    $t_1                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][\OPER{crs2}]_{15 \RANGE  8} )$ \;
-    $t_2                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][\OPER{crs1}]_{23 \RANGE 16} )$ \;
-    $t_3                 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][\OPER{crs2}]_{31 \RANGE 24} )$ \;
+    $t_0                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][{\VERB[RV]{crs1}}]_{ 7 \RANGE  0} )$ \;
+    $t_1                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][{\VERB[RV]{crs2}}]_{15 \RANGE  8} )$ \;
+    $t_2                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][{\VERB[RV]{crs1}}]_{23 \RANGE 16} )$ \;
+    $t_3                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \XCR[*][{\VERB[RV]{crs2}}]_{31 \RANGE 24} )$ \;
   }
   
   \eIf{$\VERB[RV]{rot}  = 0$}{
-    $\XCR[*][\OPER{crd0}] \ASN                                          t_3 \CONS t_2 \CONS t_1 \CONS t_0 $ \;
+    $\XCR[*][{\VERB[RV]{crd0}}] \ASN                                          t_3 \CONS t_2 \CONS t_1 \CONS t_0 $ \;
   }{
-    $\XCR[*][\OPER{crd0}] \ASN                                          t_2 \CONS t_1 \CONS t_0 \CONS t_3 $ \;
+    $\XCR[*][{\VERB[RV]{crd0}}] \ASN                                          t_2 \CONS t_1 \CONS t_0 \CONS t_3 $ \;
   }
 }
 
@@ -1355,15 +1355,15 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   \]
   $\VERB[RV]{mode}$ is encoded in the $\VERB[RV]{ca}$ field.
 }{
-    $t_0                 \ASN                                \XCR[*][\OPER{crs1}]_{ 7 \RANGE  0}  $ \;
-    $t_1                 \ASN                                \XCR[*][\OPER{crs1}]_{15 \RANGE  8}  $ \;
-    $t_2                 \ASN                                \XCR[*][\OPER{crs2}]_{23 \RANGE 16}  $ \;
-    $t_3                 \ASN                                \XCR[*][\OPER{crs2}]_{31 \RANGE 24}  $ \;
+    $t_0                        \ASN                                     \XCR[*][{\VERB[RV]{crs1}}]_{ 7 \RANGE  0}  $ \;
+    $t_1                        \ASN                                     \XCR[*][{\VERB[RV]{crs1}}]_{15 \RANGE  8}  $ \;
+    $t_2                        \ASN                                     \XCR[*][{\VERB[RV]{crs2}}]_{23 \RANGE 16}  $ \;
+    $t_3                        \ASN                                     \XCR[*][{\VERB[RV]{crs2}}]_{31 \RANGE 24}  $ \;
 
   \eIf{$\VERB[RV]{mode} = 0$}{
-    $\XCR[*][\OPER{crd0}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}     ( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
+    $\XCR[*][{\VERB[RV]{crd0}}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}     ( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
   }{
-    $\XCR[*][\OPER{crd0}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}^{-1}( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
+    $\XCR[*][{\VERB[RV]{crd0}}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}^{-1}( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
   }
 }
 
@@ -1383,42 +1383,41 @@ General Purpose Registers, rather than the \XCID Registers.
 \XCINSTR{xc.sha3.xy}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
-    $ shamt \ASN \VERB[RV]{b0} $ \;
-    $ \GPR[*][{\VERB[RV]{rd}}] \ASN ((x\%5) + 5*(y\%5)) \LSH shamt $ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN ( (   x       \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x1}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
-    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+1)\%5) + 5*(y\%5)) \LSH shamt $ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 1 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x2}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
-    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+2)\%5) + 5*(y\%5)) \LSH shamt $ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 2 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x4}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
-    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((x+4)\%5) + 5*(y\%5)) \LSH shamt $ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 4 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.yx}{rd, rs1, rs2, shamt}{
 Used to compute indexes into a SHA3 state array.
 }{
-    $ x \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0} $ \;
-    $ y \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0} $ \;
-    $ \GPR[*][{\VERB[RV]{rd}}] \ASN (((y)\%5) + 5*((2*x+3*y)\%5)) \LSH shamt $ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN ( (   y       \bmod 5 ) + 5 \cdot ( ( 2 \cdot x + 3 \cdot y ) \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 % =============================================================================

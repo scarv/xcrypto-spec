@@ -1,6 +1,8 @@
 sudo: required
-dist: trusty
+dist: cosmic
 before_install:
-- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-full
+- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 script:
-- source ./bin/conf.sh && make clean all
+- source ./bin/conf.sh 
+- tlmgr install algorithm2e
+- make clean all
