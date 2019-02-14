@@ -1,6 +1,6 @@
 sudo: required
 dist: trusty
 before_install:
-- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-full
 script:
 - source ./bin/conf.sh && make clean all
