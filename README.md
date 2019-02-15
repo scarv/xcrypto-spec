@@ -12,10 +12,11 @@ A component part of the
 project,
 XCrypto is a general-purpose Instruction Set Extension (ISE) for
 [RISC-V](https://riscv.org)
-that supports cryptographic workloads;
-this is a submodule of the main
+that supports cryptographic workloads.
+The main
 [repository](https://github.com/scarv/xcrypto)
-which houses the
+acts as a general container for resources associated with XCrypto;
+this specific submodule houses the
 XCrypto specification.
 
 <!--- -------------------------------------------------------------------- --->
