@@ -1,6 +1,8 @@
 [submodule "ext/riscv-opcodes"]
 	path = ext/riscv-opcodes
 	url = https://github.com/scarv/riscv-opcodes.git
+        branch = master
 [submodule "ext/texmf"]
 	path = ext/texmf
 	url = https://github.com/scarv/texmf.git
+        branch = master
