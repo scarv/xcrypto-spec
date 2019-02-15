@@ -12,7 +12,7 @@ A component part of the
 project,
 XCrypto is a general-purpose Instruction Set Extension (ISE) for
 [RISC-V](https://riscv.org)
-that supports cryptographic workloads.
+that supports software-based cryptographic workloads.
 The main
 [repository](https://github.com/scarv/xcrypto)
 acts as a general container for resources associated with XCrypto;
@@ -21,21 +21,46 @@ XCrypto specification.
 
 <!--- -------------------------------------------------------------------- --->
 
-# Getting started
+## Organisation
+
+```
+├── bin                     - scripts (e.g., environment configuration)
+├── doc                     - documentation
+│   ├── tex                   - LaTeX content
+│   └── build                 - working directory for build
+├── extern                  - external resources (e.g., submodules)
+│   ├── riscv-opcodes         - submodule: scarv/riscv-opcodes
+│   └── texmf                 - submodule: scarv/texmf
+```
+
+<!--- -------------------------------------------------------------------- --->
+
+## Quickstart
 
 - The
   [releases](https://github.com/scarv/xcrypto-spec/releases)
   page houses pre-built content.
 
-- Alternatively, you can build the content yourself with via the
-  following commands:
+- You can build the content yourself: having executed
 
   ```sh
-  git clone git@github.com:scarv/xcrypto-spec.git
+  git clone https://github.com/scarv/xcrypto-spec.git
   cd ./xcrypto-spec
   git submodule update --init --recursive
   source ./bin/conf.sh
   make all
   ```
+
+  you should, for example, find 
+  `${REPO_HOME}/doc/build/spec.pdf`
+  has been built.
+
+<!--- -------------------------------------------------------------------- --->
+
+## Acknowledgements
+
+This work has been supported in part by EPSRC via grant 
+[EP/R012288/1](https://gow.epsrc.ukri.org/NGBOViewGrant.aspx?GrantRef=EP/R012288/1),
+under the [RISE](http://www.ukrise.org) programme.
 
 <!--- -------------------------------------------------------------------- --->
