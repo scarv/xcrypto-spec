@@ -48,7 +48,7 @@ XCrypto specification.
   cd ./xcrypto-spec
   git submodule update --init --recursive
   source ./bin/conf.sh
-  make all
+  make doc
   ```
 
   you should, for example, find 

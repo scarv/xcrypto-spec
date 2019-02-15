@@ -1,3 +1,7 @@
+ifndef REPO_HOME
+  $(error "execute 'source ./bin/conf.sh' to configure environment")
+endif
+
 .PHONY: doc
 
 all   : doc
