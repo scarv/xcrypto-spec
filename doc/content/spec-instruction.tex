@@ -90,8 +90,8 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ld.w} {crd,        imm11(rs1)}{
-  Load a     word from memory 
-  into                        an $\XCR$ register.
+  Load a      word from memory 
+  into                         an $\XCR$ register.
 }{
   $addr                                          \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
   $index_0                                       \ASN                                            0$ \;
@@ -107,7 +107,7 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.st.b} {rs2, h, b, imm11(rs1)}{
-  Store a specific     byte of an $\XCR$ register into memory.
+  Store a specific      byte of an $\XCR$ register into memory.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm11} = \VERB[RV]{imm11hi} \CONS \VERB[RV]{imm11lo} .
@@ -137,7 +137,7 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.st.w} {rs2,       imm11(rs1)}{
-  Store                        an $\XCR$ register into memory.
+  Store                         an $\XCR$ register into memory.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm11} = \VERB[RV]{imm11hi} \CONS \VERB[RV]{imm11lo} .
@@ -238,14 +238,14 @@ to exceptions.
 
 \XCINSTR{xc.scatter.b}{crd, crs2, rs1}{
   Perform a ``scattered'' store of 
-  four     bytes 
+  four      bytes 
   from an $\XCR$ register
   into memory;
   for the $i$-th store, a base-offset style effective address is formed 
   from a
-                    a  $\GPR$ register (the   base)
+                     a  $\GPR$ register (the   base)
   plus
-  a     byte within an $\XCR$ register (the offset).
+  a      byte within an $\XCR$ register (the offset).
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\XCR[*][{\VERB[RV]{crs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\XCR[*][{\VERB[RV]{crs2}}]}{1}$ \;
@@ -266,7 +266,7 @@ to exceptions.
   into memory;
   for the $i$-th store, a base-offset style effective address is formed 
   from a
-                    a  $\GPR$ register (the   base)
+                     a  $\GPR$ register (the   base)
   plus
   a half-word within an $\XCR$ register (the offset).
 }{
@@ -282,14 +282,14 @@ to exceptions.
 
 \XCINSTR{xc.gather.b}{crd, crs2, rs1}{
   Perform a  ``gathered''  load of 
-  four     bytes 
+  four      bytes 
   from memory 
   into an $\XCR$ register;
   for the $i$-th  load, a base-offset style effective address is formed 
   from a
-                    a  $\GPR$ register (the   base)
+                     a  $\GPR$ register (the   base)
   plus
-  a     byte within an $\XCR$ register (the offset).
+  a      byte within an $\XCR$ register (the offset).
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\XCR[*][{\VERB[RV]{crs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\XCR[*][{\VERB[RV]{crs2}}]}{1}$ \;
@@ -310,7 +310,7 @@ to exceptions.
   into an $\XCR$ register;
   for the $i$-th  load, a base-offset style effective address is formed 
   from a
-                    a  $\GPR$ register (the   base)
+                     a  $\GPR$ register (the   base)
   plus
   a half-word within an $\XCR$ register (the offset).
 }{
@@ -877,8 +877,8 @@ is considered invalid.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.pperm.bx}{crd, crs1, b0, b1, b2, b3}{
-  Permute crumbs  of a byte      in some $\XCR$ register,
-  storing the result in a byte      of another $\XCR$ register.
+  Permute crumbs  of a      byte in some $\XCR$ register,
+  storing the result in a      byte of another $\XCR$ register.
   Note that the index 
   $
   \VERB[RV]{x} \in \SET{ 0, 1, 2, 3 }
