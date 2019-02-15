@@ -7,24 +7,34 @@
 
 <!--- -------------------------------------------------------------------- --->
 
-*This project describes a complete Instruction Set Extension (ISE) for the
-RISC-V architecture for accelerating cryptographic workloads.*
+A component part of the 
+[SCARV](https://github.com/scarv)
+project,
+XCrypto is a general-purpose Instruction Set Extension (ISE) for
+[RISC-V](https://riscv.org)
+that supports cryptographic workloads;
+this is a submodule of the main
+[repository](https://github.com/scarv/xcrypto)
+which houses the
+XCrypto specification.
 
 <!--- -------------------------------------------------------------------- --->
 
 # Getting started
 
-- Pre-built versions of the specification can be found on the
+- The
   [releases](https://github.com/scarv/xcrypto-spec/releases)
-  page.
+  page houses pre-built content.
 
-- Alternatively, you can build them from source yourself with 
-  the following commands:
+- Alternatively, you can build the content yourself with via the
+  following commands:
 
   ```sh
-  $> git clone git@github.com:scarv/xcrypto-spec.git
-  $> cd ./xcrypto-spec
-  $> git submodule update --init --recursive
-  $> source ./bin/conf.sh
-  $> make all
+  git clone git@github.com:scarv/xcrypto-spec.git
+  cd ./xcrypto-spec
+  git submodule update --init --recursive
+  source ./bin/conf.sh
+  make all
   ```
+
+<!--- -------------------------------------------------------------------- --->
