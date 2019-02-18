@@ -16,8 +16,8 @@ that supports software-based cryptographic workloads.
 The main
 [repository](https://github.com/scarv/xcrypto)
 acts as a general container for resources associated with XCrypto;
-this specific submodule houses the
-XCrypto specification.
+this specific submodule houses
+the XCrypto specification.
 
 <!--- -------------------------------------------------------------------- --->
 
@@ -25,9 +25,9 @@ XCrypto specification.
 
 ```
 ├── bin                     - scripts (e.g., environment configuration)
+├── build                   - working directory for build
 ├── doc                     - documentation
 │   ├── tex                   - LaTeX content
-│   └── build                 - working directory for build
 ├── extern                  - external resources (e.g., submodules)
 │   ├── riscv-opcodes         - submodule: scarv/riscv-opcodes
 │   └── texmf                 - submodule: scarv/texmf
@@ -41,19 +41,37 @@ XCrypto specification.
   [releases](https://github.com/scarv/xcrypto-spec/releases)
   page houses pre-built content.
 
-- You can build the content yourself: having executed
+- You can build the content yourself: 
 
-  ```sh
-  git clone https://github.com/scarv/xcrypto-spec.git
-  cd ./xcrypto-spec
-  git submodule update --init --recursive
-  source ./bin/conf.sh
-  make doc
-  ```
+  1. Install any associated pre-requisites, e.g.,
 
-  you should, for example, find 
-  `${REPO_HOME}/doc/build/spec.pdf`
-  has been built.
+     - a modern 
+       [LaTeX](https://www.latex-project.org)
+       distributation,
+       such as
+       [TeX Live](https://www.tug.org/texlive),
+       including any required packages.
+
+  2. Execute
+
+     ```sh
+     git clone https://github.com/scarv/xcrypto-spec.git
+     cd ./xcrypto-spec
+     git submodule update --init --recursive
+     source ./bin/conf.sh
+     ```
+
+     to initialise the repository and configure the environment.
+
+  3. Execute
+
+     ```sh
+     make doc
+     ```
+
+     for example: you should find that
+     `${REPO_HOME}/build/doc/spec.pdf`
+     has been built.
 
 <!--- -------------------------------------------------------------------- --->
 
