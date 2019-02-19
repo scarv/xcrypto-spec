@@ -6,4 +6,4 @@ before_install:
 - sudo apt-get install -y --no-install-recommends biber xzdec
 script:
 - source ./bin/conf.sh 
-- make clean all
+- make clean doc
