@@ -1,19 +1,24 @@
 BUILD = ${REPO_HOME}/build/doc
 
-${BUILD}/spec.isa : $(REPO_HOME)/extern/riscv-opcodes/opcodes-xcrypto
-	@cat ${<} | python3 $(REPO_HOME)/extern/riscv-opcodes/parse-opcodes -xcrypto-tex > ${@}
+${BUILD}/spec.isa : ${REPO_HOME}/extern/riscv-opcodes/opcodes-xcrypto
+	@cat ${<} | python3 ${REPO_HOME}/extern/riscv-opcodes/parse-opcodes -xcrypto-tex > ${@}
 
-${BUILD}/spec.pdf : ./spec.tex $(wildcard ./tex/*.tex) ${BUILD}/spec.isa
-	@pdflatex  -output-directory ${BUILD} $(basename ${<})
-	@biber    --output_directory ${BUILD} $(basename ${<})
-	@pdflatex  -output-directory ${BUILD} $(basename ${<})
-	@biber    --output_directory ${BUILD} $(basename ${<})
-	@pdflatex  -output-directory ${BUILD} $(basename ${<})
+${BUILD}/spec.pdf : ./spec.tex $(wildcard ./tex/* ./image/*) ${BUILD}/spec.isa
+	@TEXINPUTS="${TEXINPUTS}:.:${BUILD}" pdflatex  -output-directory ${BUILD} $(basename ${<})
+	@TEXINPUTS="${TEXINPUTS}:.:${BUILD}" biber    --output_directory ${BUILD} $(basename ${<})
+	@TEXINPUTS="${TEXINPUTS}:.:${BUILD}" pdflatex  -output-directory ${BUILD} $(basename ${<})
+	@TEXINPUTS="${TEXINPUTS}:.:${BUILD}" biber    --output_directory ${BUILD} $(basename ${<})
+	@TEXINPUTS="${TEXINPUTS}:.:${BUILD}" pdflatex  -output-directory ${BUILD} $(basename ${<})
 
-${BUILD} :
-	@mkdir --parents ${@}
+.PHONY: image
 
-all   : ${BUILD} ${BUILD}/spec.pdf
+dir   :
+	@mkdir --parents ${BUILD}
+	@mkdir --parents ${BUILD}/image
+
+image :
+
+all   : dir image ${BUILD}/spec.pdf
 
 clean :
-	@rm -rf ${REPO_HOME}/build/doc
+	@rm -rf ${BUILD}

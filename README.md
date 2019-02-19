@@ -7,7 +7,7 @@
 
 <!--- -------------------------------------------------------------------- --->
 
-A component part of the 
+*A component part of the
 [SCARV](https://github.com/scarv)
 project,
 XCrypto is a general-purpose Instruction Set Extension (ISE) for
@@ -17,7 +17,7 @@ The main
 [repository](https://github.com/scarv/xcrypto)
 acts as a general container for resources associated with XCrypto;
 this specific submodule houses
-the XCrypto specification.
+the XCrypto specification.*
 
 <!--- -------------------------------------------------------------------- --->
 
@@ -28,9 +28,9 @@ the XCrypto specification.
 ├── build                   - working directory for build
 ├── doc                     - documentation
 │   ├── tex                   - LaTeX content
-├── extern                  - external resources (e.g., submodules)
-│   ├── riscv-opcodes         - submodule: scarv/riscv-opcodes
-│   └── texmf                 - submodule: scarv/texmf
+└── extern                  - external resources (e.g., submodules)
+    ├── riscv-opcodes         - submodule: scarv/riscv-opcodes
+    └── texmf                 - submodule: scarv/texmf
 ```
 
 <!--- -------------------------------------------------------------------- --->
