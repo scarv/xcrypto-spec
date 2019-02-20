@@ -10,9 +10,9 @@ doc       :
 doc-clean : 
 	@${MAKE} -C ${REPO_HOME}/doc clean
 
-all       : doc
+all      : doc
 
-clean     : doc-clean
+clean    : doc-clean
 
-spotless  :
+spotless :
 	@rm -rf ${REPO_HOME}/build/*
