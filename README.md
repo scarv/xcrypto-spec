@@ -15,7 +15,7 @@ XCrypto is a general-purpose Instruction Set Extension (ISE) for
 that supports software-based cryptographic workloads.
 The main
 [repository](https://github.com/scarv/xcrypto)
-acts as a general container for resources associated with XCrypto;
+acts as a general container for associated resources;
 this specific submodule houses
 the XCrypto specification.*
 
@@ -63,15 +63,19 @@ the XCrypto specification.*
 
      to initialise the repository and configure the environment.
 
-  3. Execute
+  3. Use targets in the top-level `Makefile` to build or execute
+     the content, e.g.,
 
-     ```sh
-     make doc
-     ```
+     - execute
 
-     for example: you should find that
-     `${REPO_HOME}/build/doc/spec.pdf`
-     has been built.
+       ```sh
+       make doc
+       ```
+
+       to build the documentation: 
+       you should find that
+       `${REPO_HOME}/build/doc/spec.pdf`
+       has been built.
 
 <!--- -------------------------------------------------------------------- --->
 
