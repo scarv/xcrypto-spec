@@ -154,6 +154,131 @@
   $\MEM[*][addr+3] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_3}$ \;
 }
 
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.bu}{crd(b0), rs1, rs2}{
+Load a byte from memory into a particular byte of an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+\VERB[RV]{b0} refers to which byte of the destination register to modify.
+If \VERB[RV]{b0} is zero, the zero-extended byte value is written to
+$\XCR[*][{\VERB[RV]{crd}}]$.
+If \VERB[RV]{b0} is non-zero, then only bytes
+\VERB[RV]{b0} 
+and
+$\VERB[RV]{b0}+1$
+of the destination register is modified.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
+  \If{$index = 0$}{
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
+  }
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.hu}{crd(b0), rs1, rs2}{
+Load a halfword from memory into an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+If the resulting address is not halfword aligned, implementations must raise
+exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{lhu} instruction does.
+\VERB[RV]{b0} refers to the first byte of the destination register to modify.
+It must be either $0$ or $2$, denoting the lower or upper halfword respectivley.
+If \VERB[RV]{b0} is zero, the zero-extended halfword value is written to
+$\XCR[*][{\VERB[RV]{crd}}]$.
+If \VERB[RV]{b0} is non-zero, then only the \VERB[RV]{b0}'th halfword of the
+destination register is modified.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index+1} \ASN \MEM[*][{addr+1}]$ \;
+  \If{$index = 0$}{
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
+  }
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.w}{crd, rs1, rs2}{
+Load a word from memory into an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+If the resulting address is not word aligned, implementations must raise
+exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{lw} instruction does.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \MEM[*][{addr+0}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN \MEM[*][{addr+1}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN \MEM[*][{addr+2}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN \MEM[*][{addr+3}]$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.str.b}{crd(b0), rs1, rs2}{
+Store a byte to memory from an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+\VERB[RV]{b0} refers to which byte of the source $\XCR[*][{\VERB[RV]{crd}}]$
+register to write to memory.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\MEM[*][{addr  }] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.str.h}{crd(b0), rs1, rs2}{
+Store a halfword to memory from an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+If the resulting address is not halfword aligned, implementations must raise
+exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{sh} instruction does.
+\VERB[RV]{b0} must be either $0$ or $2$, and refers to the first byte of the source
+$\XCR[*][{\VERB[RV]{crd}}]$ register to write to memory.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\MEM[*][{addr+0}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index+0}$ \;
+  $\MEM[*][{addr+1}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index+1}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.str.w}{crd, rs1, rs2}{
+Store a word to memory from an $\XCR$ register.
+The memory address is computed by adding the values in
+$\GPR[*][{\VERB[RV]{rs1}}]$
+and
+$\GPR[*][{\VERB[RV]{rs2}}]$.
+If the resulting address is not word aligned, implementations must raise
+exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{sw} instruction does.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\MEM[*][{addr+0}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0}$ \;
+  $\MEM[*][{addr+1}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1}$ \;
+  $\MEM[*][{addr+2}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2}$ \;
+  $\MEM[*][{addr+3}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3}$ \;
+}
+
 % =============================================================================
 
 \subsubsection{Class-$2.1$: randomness}
