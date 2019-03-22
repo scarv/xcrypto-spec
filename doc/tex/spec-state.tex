@@ -68,21 +68,30 @@ Note that
       pitched as a control-path for the co-processor: address computation,
       control-flow orchestration, etc. fall under the remit of the former, 
       since they can be supported by RV32I as is.
+\item The $\XCR$ register file must have all values set to zero on a reset.
 \end{itemize}    
 
 % =============================================================================
 
-\subsubsection{$\SPR{XCCR}$ and $\SPR{XCSR}$ Control and Status Registers (CSRs)}
+\subsubsection{Control and Status Registers (CSRs)}
 \label{sec:spec:state:csr}
 
-\begin{table}[p]
+\XCID 
+Requires three additional
+non-standard, CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}.
+In practice one physical register is required, with different shadow
+versions existing at different privilige levels.
+Table \ref{tab:csr} shows the address space layout of the additional
+CSRs.
+
+\begin{table}[h]
 \begin{center}
-\begin{tabular}{|r@{\;}l|cc|}
+\begin{tabular}{|lcc|}
 \hline
-\multicolumn{2}{|c|}{Name}      & Address         & Access     \\
-\hline\hline
-\XCID Control Register & (XCCR) & \RADIX{7C0}{16} & read/write \\
-\XCID Status  Register & (XCSR) & \RADIX{FC0}{16} & read-only  \\
+       Name      & Address         & Access     \\ \hline
+$\SPR{mxcsr}$ & \RADIX{7C0}{16} & read/write \\
+$\SPR{sxcsr}$ & \RADIX{DC0}{16} & read/write \\
+$\SPR{uxcsr}$ & \RADIX{CC0}{16} & read       \\
 \hline
 \end{tabular}
 \end{center}
@@ -90,113 +99,120 @@ Note that
 \label{tab:csr}
 \end{table}
 
-\begin{figure}[p]
-\begin{center}
-\begin{bytefield}[bitwidth={1.4em},bitheight={8.0ex},endianness=big]{32}
-\bitheader{0-31}               
-\\
-  \bitbox{30}{\rule{\width}{\height}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $S        $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $U        $}}
-\\
-\end{bytefield}
-\end{center}
-\caption{A diagrammatic description of the $\SPR{XCCR}$ register; note that blanked out bits are reserved.}
-\label{fig:xccr}
-\end{figure}
+\paragraph{$\SPR{mxcsr}$ Register}
+The machine level \XCID CSR is responsible for:
+feature identification,
+state dirtiness tracking and
+controlling supervisor and user level access
+to the \XCID registers.
+Figure \ref{fig:mxcsr} shows the layout of the bitfields within the register.
+Table \ref{tab:mxcsr} describes each field of the $\SPR{mxcsr}$ in detail.
 
-\begin{figure}[p]
+\begin{figure}[h!]
 \begin{center}
 \begin{bytefield}[bitwidth={1.4em},bitheight={8.0ex},endianness=big]{32}
 \bitheader{0-31}               
 \\
-  \bitbox{19}{\rule{\width}{\height}}
+  \bitbox{15}{\rule{\width}{\height}}
+& \bitbox{ 1}{\rule{\width}{\height}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $SHA3     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $AES      $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{16}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 8}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 4}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 2}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 1}$}}
-& \bitbox{ 1}{\rule{\width}{\height}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $SHA3     $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $AES      $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $MP       $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK     $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $BIT      $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $MEM      $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $RND      $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $RNG      $}}
+& \bitbox{ 2}{\rotatebox{90}{\tiny $XS       $}}
+& \bitbox{ 1}{\rule{\width}{\height}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $S        $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $U        $}}
 \\
 \end{bytefield}
 \end{center}
-\caption{A diagrammatic description of the $\SPR{XCSR}$ register; note that blanked out bits are reserved.}
-\label{fig:xcsr}
+\caption{A diagrammatic description of the $\SPR{mxcsr}$ register. Blanked out bits are reserved
+and read as zero.}
+\label{fig:mxcsr}
 \end{figure}
 
-\begin{table}[p]
+\begin{table}[h]
 \begin{center}
-\begin{tabular}{|lc|l|}
+\begin{tabular}{|l|c|c|l|}
 \hline
-Field        & Index  & Description                                                                                             \\
-\hline\hline
-$U         $ & $ 0$   & \XCID is accessible in user       mode (set), or not (clear)                                            \\
-$S         $ & $ 1$   & \XCID is accessible in supervisor mode (set), or not (clear)                                            \\
-\hline
+Field        & Index  & R/W & Description                                                                         \\ \hline
+$U         $ & $ 0$   & R/W & Indicates if \XCID is accessible in user mode                                       \\
+$S         $ & $ 1$   & R/W & Indicates if \XCID is accessible in supervisor mode                                 \\
+$XS        $ & $4:3$  & R   & Indicates whether \XCID registers need saving on a context switch                   \\
+$RNG       $ & $ 5$   & R   & Is RNG  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$MEM       $ & $ 6$   & R   & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$BIT       $ & $ 7$   & R   & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$MP        $ & $ 8$   & R   & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$PACK_{ 1} $ & $ 9$   & R   & Are packed operations on sub-word  of $w = 32$ bits supported (set), or not (clear) \\
+$PACK_{ 2} $ & $10$   & R   & Are packed operations on sub-words of $w = 16$ bits supported (set), or not (clear) \\
+$PACK_{ 4} $ & $11$   & R   & Are packed operations on sub-words of $w =  8$ bits supported (set), or not (clear) \\
+$PACK_{ 8} $ & $12$   & R   & Are packed operations on sub-words of $w =  4$ bits supported (set), or not (clear) \\
+$PACK_{16} $ & $13$   & R   & Are packed operations on sub-words of $w =  2$ bits supported (set), or not (clear) \\
+$AES       $ & $14$   & R   & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$SHA3      $ & $15$   & R   & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ \hline
 \end{tabular}
 \end{center}
-\caption{A tabular     description of the $\SPR{XCCR}$ register.}
-\label{tab:xccr}
+\caption{A tabular description of the $\SPR{mxcsr}$ register.}
+\label{tab:mxcsr}
 \end{table}
 
-\begin{table}[p]
-\begin{center}
-\begin{tabular}{|lc|l|}
-\hline
-Field        & Index  & Description                                                                                             \\
-\hline\hline
-$RND       $ & $ 0$   & Is RND  feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$MEM       $ & $ 1$   & Is MEM  feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$BIT       $ & $ 2$   & Is BIT  feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$PACK      $ & $ 3$   & Is PACK feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$MP        $ & $ 4$   & Is MP   feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$AES       $ & $ 5$   & Is AES  feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$SHA3      $ & $ 6$   & Is SHA3 feature class, per \REFSEC{sec:bg:feature},                     supported (set), or not (clear) \\
-$PACK_{ 1} $ & $ 8$   & Are packed operations on $\VERB[RV]{n} =  1$ sub-word  of $w = 32$ bits supported (set), or not (clear) \\
-$PACK_{ 2} $ & $ 9$   & Are packed operations on $\VERB[RV]{n} =  2$ sub-words of $w = 16$ bits supported (set), or not (clear) \\
-$PACK_{ 4} $ & $10$   & Are packed operations on $\VERB[RV]{n} =  4$ sub-words of $w =  8$ bits supported (set), or not (clear) \\
-$PACK_{ 8} $ & $11$   & Are packed operations on $\VERB[RV]{n} =  8$ sub-words of $w =  4$ bits supported (set), or not (clear) \\
-$PACK_{16} $ & $12$   & Are packed operations on $\VERB[RV]{n} = 16$ sub-words of $w =  2$ bits supported (set), or not (clear) \\
-\hline
-\end{tabular}
-\end{center}
-\caption{A tabular     description of the $\SPR{XCSR}$ register.}
-\label{tab:xcsr}
-\end{table}
+The $\SPR{U}$ and $\SPR{S}$ bits allow access to \XCID instructions and 
+state in user and supervisor mode respectivley.
+If an \XCID instruction is executed in $U$ or $S$ mode, and the 
+corresponding bit is set, the instruction executes as normal.
+Any attempt to execute an \XCID instruction in $U$ or $S$ mode when the 
+corresponding bit is clear causes an illegal opcode exception.
+If $\SPR{U}$ is set, then $\SPR{S}$ must also be set. Any attempt to write
+$\SPR{U}$ and $\SPR{S}$
+such that $\SPR{U}=1$ and $\SPR{S}=0$ will cause an illegal opcode exception.
 
-\XCID 
-demands two additional
-non-standard, machine-class CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}
-summarised in \REFTAB{tab:csr}:
+The $\SPR{XS}$ field is used to indicate whether \XCID state is dirty and must be saved
+on a context switch.
+This field is analogous to the $\SPR{FS}$ field of the $\SPR{mstatus}$ register
+described in \cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17}.
+We put the $\SPR{XS}$ field in the low bits of the register to allow
+atomic accesses with a single \VERB[RV]{csr*i} instruction, rather than needing
+reads, shifts and masks from the high bits.
 
-\begin{enumerate}
-\item The \XCID Control Register (XCCR), denoted $\SPR{XCCR}$,
-      is described in \REFFIG{fig:xccr} and \REFTAB{tab:xccr}
-      the purpose of this CSR is to 
-      control the            configuration of an \XCID implementation.
-\item The \XCID Status  Register (XCSR), denoted $\SPR{XCSR}$,
-      is described in \REFFIG{fig:xcsr} and \REFTAB{tab:xcsr};
-      the purpose of this CSR is to 
-      inspect the status and configuration of an \XCID implementation,
-      including feature identification
-      (cf. the x86 \VERB{cpuid}~\cite[Page 3-190--3-224]{SCARV:X86:2:18}).
-      Note that 
-      \[
-      \SPR{XCSR}[*][PACK] = \SPR{XCSR}[*][PACK_{ 1}] \IOR
-                            \SPR{XCSR}[*][PACK_{ 2}] \IOR
-                            \SPR{XCSR}[*][PACK_{ 4}] \IOR
-                            \SPR{XCSR}[*][PACK_{ 8}] \IOR
-                            \SPR{XCSR}[*][PACK_{16}]
-      \]
-      with the single field retained for ease of inspection.
-\end{enumerate}
+\begin{itemize}
+\item $00$ - \XCID is disabled. All \XCID instructions raise an illegal opcode
+    exception.
+    Implementations may use this state \XCID to implement power saving 
+    optimisations.
+\item $01$ - \XCID is enabled, with all \XCID registers holding their initial
+    / post-reset value.
+\item $10$ - \XCID is enabled, and no state needs saving.
+\item $11$ - \XCID is enabled, and state needs saving on a context switch.
+\end{itemize}
+
+These encodings mirror what is defined in
+\cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17}.
+When the $\SPR{XS}$ bits change from $00$ to $01$, the $\XCR$ registers must be
+set to their post-reset value.
+
+Note that if \XCID is "off" as per $\SPR{XS}=0$, then even \XCID instructions
+executed in machine mode will also raise illegal opcode exceptions.
+
+\paragraph{$\SPR{sxcsr}$ and $\SPR{uxcsr}$ Registers}
+
+The $\SPR{sxcsr}$ and $\SPR{uxcsr}$ registers act as shadows of the 
+$\SPR{mxcsr}$. They behave identically except for the following points:
+
+\begin{itemize}
+\item If the $\SPR{S}$ bit of $\SPR{mxcsr}$ is clear, then the
+    $\SPR{sxcsr}$ and $\SPR{uxcsr}$ CSRs read zeros when read, and
+    raise an illegal opcode exception when written.
+\item If the $\SPR{U}$ bit of $\SPR{mxcsr}$ is clear, then the
+    $\SPR{uxcsr}$ reads zeros when read, and
+    raises an illegal opcode exception when written.
+\end{itemize}
 
 % =============================================================================
 
