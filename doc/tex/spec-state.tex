@@ -80,7 +80,7 @@ Note that
 Requires three additional
 non-standard, CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}.
 In practice one physical register is required, with different shadow
-versions existing at different privilige levels.
+versions existing at different privilege levels.
 Table \ref{tab:csr} shows the address space layout of the additional
 CSRs.
 
@@ -164,7 +164,7 @@ $SHA3      $ & $15$   & R   & Is SHA3 feature class, per \REFSEC{sec:bg:feature}
 \end{table}
 
 The $\SPR{U}$ and $\SPR{S}$ bits allow access to \XCID instructions and 
-state in user and supervisor mode respectivley.
+state in user and supervisor mode respectively.
 If an \XCID instruction is executed in $U$ or $S$ mode, and the 
 corresponding bit is set, the instruction executes as normal.
 Any attempt to execute an \XCID instruction in $U$ or $S$ mode when the 
