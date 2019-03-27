@@ -142,21 +142,21 @@ and read as zero.}
 \begin{center}
 \begin{tabular}{|l|c|c|l|}
 \hline
-Field        & Index  & R/W & Description                                                                         \\ \hline
-$U         $ & $ 0$   & R/W & Indicates if \XCID is accessible in user mode                                       \\
-$S         $ & $ 1$   & R/W & Indicates if \XCID is accessible in supervisor mode                                 \\
-$XS        $ & $4:3$  & R   & Indicates whether \XCID registers need saving on a context switch                   \\
-$RNG       $ & $ 5$   & R   & Is RNG  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$MEM       $ & $ 6$   & R   & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$BIT       $ & $ 7$   & R   & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$MP        $ & $ 8$   & R   & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$PACK_{ 1} $ & $ 9$   & R   & Are packed operations on sub-word  of $w = 32$ bits supported (set), or not (clear) \\
-$PACK_{ 2} $ & $10$   & R   & Are packed operations on sub-words of $w = 16$ bits supported (set), or not (clear) \\
-$PACK_{ 4} $ & $11$   & R   & Are packed operations on sub-words of $w =  8$ bits supported (set), or not (clear) \\
-$PACK_{ 8} $ & $12$   & R   & Are packed operations on sub-words of $w =  4$ bits supported (set), or not (clear) \\
-$PACK_{16} $ & $13$   & R   & Are packed operations on sub-words of $w =  2$ bits supported (set), or not (clear) \\
-$AES       $ & $14$   & R   & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$SHA3      $ & $15$   & R   & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ \hline
+Field        & Index  & Access & Description                                                                         \\ \hline
+$U         $ & $ 0$   & WLRL   & Indicates if \XCID is accessible in user mode                                       \\
+$S         $ & $ 1$   & WLRL   & Indicates if \XCID is accessible in supervisor mode                                 \\
+$XS        $ & $4:3$  & R/O    & Indicates whether \XCID registers need saving on a context switch                   \\
+$RNG       $ & $ 5$   & R/O    & Is RNG  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$MEM       $ & $ 6$   & R/O    & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$BIT       $ & $ 7$   & R/O    & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$MP        $ & $ 8$   & R/O    & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$PACK_{ 1} $ & $ 9$   & R/O    & Are operations on sub-word  of $w = 32$ bits supported (set), or not (clear) \\
+$PACK_{ 2} $ & $10$   & R/O    & Are operations on sub-words of $w = 16$ bits supported (set), or not (clear) \\
+$PACK_{ 4} $ & $11$   & R/O    & Are operations on sub-words of $w =  8$ bits supported (set), or not (clear) \\
+$PACK_{ 8} $ & $12$   & R/O    & Are operations on sub-words of $w =  4$ bits supported (set), or not (clear) \\
+$PACK_{16} $ & $13$   & R/O    & Are operations on sub-words of $w =  2$ bits supported (set), or not (clear) \\
+$AES       $ & $14$   & R/O    & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$SHA3      $ & $15$   & R/O    & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ \hline
 \end{tabular}
 \end{center}
 \caption{A tabular description of the $\SPR{mxcsr}$ register.}
