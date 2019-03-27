@@ -555,58 +555,6 @@ to exceptions.
   $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{hi \RANGE lo}$ \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{( 2 \cdot \VERB[RV]{cl} - 1 ) \RANGE 0} \;
 }
 
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.mix.l}{crd, crs1, crs2, rtamt}{
-  Form a result by mix together bits from two operands based on a mask:
-  the instruction essentially computes  
-  \[
-  \INDEX{r}{i} = \left\{\begin{array}{ll}
-                        \INDEX{x}{i} \OP[32][u]{\RRT}   \VERB[RV]{rtamt}        & \mbox{~if $\INDEX{m}{i} = 1$} \\
-                        \INDEX{r}{i}                                            & \mbox{~otherwise            } \\
-                        \end{array}
-                        \right.
-  \]
-  for $r$, $x$, and $m$ in $\XCR$ registers,
-  and for each 
-  $
-  0 \leq i < 32 .
-  $ 
-}{
-  $t \ASN \XCR[*][{\VERB[RV]{crs1}}] \OP[32][u]{\RRT}   \VERB[RV]{rtamt}       $ \;
-  \For{$i = 0$ {\bf upto} $31$}{
-    \If{$\INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i} = 1$}{
-      $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX{t}{i}$
-    }
-  }
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.mix.h}{crd, crs1, crs2, rtamt}{
-  Form a result by mix together bits from two operands based on a mask:
-  the instruction essentially computes  
-  \[
-  \INDEX{r}{i} = \left\{\begin{array}{ll}
-                        \INDEX{x}{i} \OP[32][u]{\RRT} ( \VERB[RV]{rtamt} + 16 ) & \mbox{~if $\INDEX{m}{i} = 1$} \\
-                        \INDEX{r}{i}                                            & \mbox{~otherwise            } \\
-                        \end{array}
-                        \right.
-  \]
-  for $r$, $x$, and $m$ in $\XCR$ registers,
-  and for each 
-  $
-  0 \leq i < 32 .
-  $ 
-}{
-  $t \ASN \XCR[*][{\VERB[RV]{crs1}}] \OP[32][u]{\RRT} ( \VERB[RV]{rtamt} + 16 )$ \;
-  \For{$i = 0$ {\bf upto} $31$}{
-    \If{$\INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i} = 1$}{
-      $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX{t}{i}$
-    }
-  }
-}
-
 
 % -----------------------------------------------------------------------------
 
