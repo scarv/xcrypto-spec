@@ -543,8 +543,8 @@ to exceptions.
   The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
   For an instruction word to decode as $\VERB[RV]{xc.ins}$,
   it is required that
-  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than the source register
-  length.
+  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
+  the source register length.
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
@@ -562,8 +562,8 @@ to exceptions.
   The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
   For an instruction word to decode as $\VERB[RV]{xc.ins}$,
   it is required that
-  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than the source register
-  length.
+  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
+  the source register length.
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
