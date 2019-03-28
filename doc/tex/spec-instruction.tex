@@ -539,11 +539,9 @@ to exceptions.
   write them as the LSBs in another $\XCR$ register.
   The extracted bitfield is zero padded upto 
   the length of the destination register.
-  The $\VERB[RV]{start}$ argument is stored in the $\VERB[RV]{cs}$ field.
-  The $\VERB[RV]{length}$ argument is stored in the $\VERB[RV]{cl}$ field.
-  Note that in the case where $\VERB[RV]{cl} = 0$, this indicates
-  a bitfield of length $1$.
-  For an instruction word to decode as $\VERB[RV]{xc.ext}$,
+  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
+  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
+  For an instruction word to decode as $\VERB[RV]{xc.ins}$,
   it is required that
   $\VERB[RV]{start} + \VERB[RV]{length}$ be less than the source register
   length.
@@ -560,12 +558,8 @@ to exceptions.
   from the LSBs of one $\XCR$ register, into
   another $\XCR$ register at an arbitrary position.
   All other bits in the destination register are unaffected.
-  The $\VERB[RV]{start}$ argument is stored in the $\VERB[RV]{cs}$ field.
-  The $\VERB[RV]{length}$ argument is stored in the $\VERB[RV]{cl}$ field.
-  Note that in the case where $\VERB[RV]{cl} = 0$, this indicates
-  a bitfield of length $1$.
-  When $\VERB[RV]{start} + \VERB[RV]{length}$ is greater than the length
-  of the source register, an illegal opcode exception must be thrown.
+  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
+  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
   For an instruction word to decode as $\VERB[RV]{xc.ins}$,
   it is required that
   $\VERB[RV]{start} + \VERB[RV]{length}$ be less than the source register
