@@ -279,6 +279,35 @@ exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{sw} instruct
   $\MEM[*][{addr+3}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3}$ \;
 }
 
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.init}{}{
+Initialise all XCrypto architectural state to zero.
+This instruction is designed to be used during a context switch to prevent
+a) logical leakage and 
+b) side-channel leakage.
+Once any state is saved, this instruction is executed to efficiently set all
+XCrypto registers to an initial value.
+An implementation may use this instruction to implement any micro-architectural
+enforcement of process non-interference.
+This might include flushing any time-multiplexed state, or clearing intermediate
+value / pipeline registers to prevent side channel leakage.
+
+The aim of this instruction is also to allow implementers to give software an
+explicit mechanism to clear any state which is not otherwise architecturally
+visible\cite{SCARV:GeYarHei:18}.
+This makes the exact implementation of the instruction very device dependent,
+even if the architectural effects are limited and explicitly defined.
+Any implementation which uses \VERB[RV]{xc.init} to clear micro-architectural
+state must document exactly what it does, and {\em how} it does it.
+For example, simply setting an intermediate register value to zero will
+potentially leak it's hamming weight in a power or EM side channel.
+}{
+    \For{$i=0$ {\bf upto} $15$}{
+        $\XCR[*][{\VERB[RV]{i}}] \ASN 0$
+    }
+}
+
 % =============================================================================
 
 \subsubsection{Class-$2.1$: randomness}
