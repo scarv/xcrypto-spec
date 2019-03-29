@@ -533,78 +533,41 @@ to exceptions.
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ext}{crd, crs, lo, hi}{
-  Extract a contiguous sequences of $2$-bit crumbs 
+\XCINSTR{xc.ext}{crd, crs, start, length}{
+  Extract a contiguous sequence of bits 
   from             one $\XCR$ register, and
-  insert them as the LSBs in another $\XCR$ register.
+  write them as the LSBs in another $\XCR$ register.
+  The extracted bitfield is zero padded upto 
+  the length of the destination register.
+  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
+  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
+  For an instruction word to decode as $\VERB[RV]{xc.ins}$,
+  it is required that
+  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
+  the source register length.
 }{
-  $lo \ASN 2 \cdot \VERB[RV]{cs}         $ \;
-  $hi \ASN 2 \cdot \VERB[RV]{cl} + lo - 1$ \;
-  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{( 2 \cdot \VERB[RV]{cl} - 1 ) \RANGE 0} \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{hi \RANGE lo}$ \;
+  $lo \ASN \VERB[RV]{cs}                $ \;
+  $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
+  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{} \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{hi \RANGE lo}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ins}{crd, crs, lo, hi}{
-  Extract a contiguous sequences of $2$-bit crumbs 
-  from the LSBs of one $\XCR$ register, and
-  insert   them           in another $\XCR$ register.
+\XCINSTR{xc.ins}{crd, crs, start, length}{
+  Insert a contiguous sequence of bits
+  from the LSBs of one $\XCR$ register, into
+  another $\XCR$ register at an arbitrary position.
+  All other bits in the destination register are unaffected.
+  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
+  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
+  For an instruction word to decode as $\VERB[RV]{xc.ins}$,
+  it is required that
+  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
+  the source register length.
 }{
-  $lo \ASN 2 \cdot \VERB[RV]{cs}         $ \;
-  $hi \ASN 2 \cdot \VERB[RV]{cl} + lo - 1$ \;
-  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{hi \RANGE lo}$ \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{( 2 \cdot \VERB[RV]{cl} - 1 ) \RANGE 0} \;
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.mix.l}{crd, crs1, crs2, rtamt}{
-  Form a result by mix together bits from two operands based on a mask:
-  the instruction essentially computes  
-  \[
-  \INDEX{r}{i} = \left\{\begin{array}{ll}
-                        \INDEX{x}{i} \OP[32][u]{\RRT}   \VERB[RV]{rtamt}        & \mbox{~if $\INDEX{m}{i} = 1$} \\
-                        \INDEX{r}{i}                                            & \mbox{~otherwise            } \\
-                        \end{array}
-                        \right.
-  \]
-  for $r$, $x$, and $m$ in $\XCR$ registers,
-  and for each 
-  $
-  0 \leq i < 32 .
-  $ 
-}{
-  $t \ASN \XCR[*][{\VERB[RV]{crs1}}] \OP[32][u]{\RRT}   \VERB[RV]{rtamt}       $ \;
-  \For{$i = 0$ {\bf upto} $31$}{
-    \If{$\INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i} = 1$}{
-      $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX{t}{i}$
-    }
-  }
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.mix.h}{crd, crs1, crs2, rtamt}{
-  Form a result by mix together bits from two operands based on a mask:
-  the instruction essentially computes  
-  \[
-  \INDEX{r}{i} = \left\{\begin{array}{ll}
-                        \INDEX{x}{i} \OP[32][u]{\RRT} ( \VERB[RV]{rtamt} + 16 ) & \mbox{~if $\INDEX{m}{i} = 1$} \\
-                        \INDEX{r}{i}                                            & \mbox{~otherwise            } \\
-                        \end{array}
-                        \right.
-  \]
-  for $r$, $x$, and $m$ in $\XCR$ registers,
-  and for each 
-  $
-  0 \leq i < 32 .
-  $ 
-}{
-  $t \ASN \XCR[*][{\VERB[RV]{crs1}}] \OP[32][u]{\RRT} ( \VERB[RV]{rtamt} + 16 )$ \;
-  \For{$i = 0$ {\bf upto} $31$}{
-    \If{$\INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i} = 1$}{
-      $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX{t}{i}$
-    }
-  }
+  $lo \ASN \VERB[RV]{cs}                $ \;
+  $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
+  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{hi \RANGE lo}$ \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{\VERB[RV]{cl} \RANGE 0} \;
 }
 
 
