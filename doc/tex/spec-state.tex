@@ -35,8 +35,9 @@ x87 state, {\em must} be robustly mitigated.
 
 \XCID 
 demands one additional 
-$16$-element, $32$-bit register file;
-we refer to this as the $\XCR$ register file, distinguishing it from the
+$16$-element, $\XCLEN$-bit register file,
+where $\XCLEN = 32$.
+We refer to this as the $\XCR$ register file, distinguishing it from the
 general-purpose $\GPR$ register file specified by RV32I.
 Note that
 
