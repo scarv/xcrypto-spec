@@ -5,8 +5,15 @@
 
 \begin{itemize}
 
-\item Since \XCID is an explicitly an extension of RV32I, we retain the use
-      of \RVXLEN as a general placeholder but assume $\RVXLEN = 32$.
+\item We make no assumption about the value of $\RVXLEN$ for the base
+      architecture which \XCID extends.
+      \XCID is explicitly designed for use with microcontrollers, so
+      some design decisions will make more sense when considering
+      $\RVXLEN=32$.
+
+\item We use an analogous variable $\XCLEN$, defined in section
+     \ref{sec:spec:state:xcr}, to denote the width of additional \XCID
+     state.
 
 \item \XCID demands interaction with an RNG, the concrete instantiation of 
       which is unspecified: we assume the RNG design follows best-practice,
