@@ -68,12 +68,16 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.ld.hiu}        
-\XCENCODE{xc.ld.liu}        
-\XCENCODE{xc.bop}           
-\XCENCODE{xc.ext}           
-\XCENCODE{xc.ins}           
-\XCENCODE{xc.lut}           
+\XCENCODE{xc.ld.hiu}
+\XCENCODE{xc.ld.liu}
+\XCENCODE{xc.bop}
+\XCENCODE{xc.ipbit}
+\XCENCODE{xc.pbit}
+\XCENCODE{xc.pbyte}
+\XCENCODE{xc.ins}
+\XCENCODE{xc.bmv}
+\XCENCODE{xc.ext}
+\XCENCODE{xc.lut}
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.3$, per \REFSEC{sec:spec:instruction:2:3}.}
@@ -99,13 +103,6 @@
 \XCENCODE{xc.psrl.i}        
 \XCENCODE{xc.prot}          
 \XCENCODE{xc.prot.i}        
-\XCENCODE{xc.pperm.w}       
-\XCENCODE{xc.pperm.h0}      
-\XCENCODE{xc.pperm.h1}      
-\XCENCODE{xc.pperm.b0}      
-\XCENCODE{xc.pperm.b1}      
-\XCENCODE{xc.pperm.b2}      
-\XCENCODE{xc.pperm.b3}      
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.4$, per \REFSEC{sec:spec:instruction:2:4}.}
