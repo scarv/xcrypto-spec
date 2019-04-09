@@ -563,7 +563,7 @@ to exceptions.
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ext}{crd, crs, start, length}{
+\XCINSTR{xc.ext}{crd, crs1, start, length}{
   Extract a contiguous sequence of bits 
   from             one $\XCR$ register, and
   write them as the LSBs in another $\XCR$ register.
@@ -583,7 +583,7 @@ to exceptions.
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ins}{crd, crs, start, length}{
+\XCINSTR{xc.ins}{crd, crs1, start, length}{
   Insert a contiguous sequence of bits
   from the LSBs of one $\XCR$ register, into
   another $\XCR$ register at an arbitrary position.
@@ -600,8 +600,93 @@ to exceptions.
   $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{hi \RANGE lo}$ \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{\VERB[RV]{cl} \RANGE 0} \;
 }
 
-
 % -----------------------------------------------------------------------------
+
+\XCINSTR{xc.bmv}{crd, crs1, s, d}{
+    Copy bit
+    $\VERB[RV]{s}$
+    of
+    $\XCR[*][{\VERB[RV]{crs1}}]$
+    into bit
+    $\VERB[RV]{d}$
+    of
+    $\XCR[*][{\VERB[RV]{crd}}]$.
+    All other destination register bits remain un-modified.
+}{
+  $s \ASN \VERB[RV]{cs}$ \;
+  $d \ASN \VERB[RV]{cl}$ \;
+  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{d \RANGE d} \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{s \RANGE s}$ \;
+}
+
+% ----------------------------------------------------------------------------
+
+\XCINSTR{xc.pbit}{crd, crs1, cs}{
+    A generic permutation instruction.
+    This instruction implements a 5-layer butterfly network.
+    Each bit in each layer in the network can select one of two bits
+    in the previous layer: itself, or another based on some function
+    of it's position and layer (see $j'$ below).
+    Each $\VERB[RV]{xc.pbit}$ instruction can activate upto 5 layers of
+    the network.
+    Repeated application of the instruction with different masks can
+    achieve any 32-bit permutation in 30 instructions or fewer.
+}{
+    $t1 = \XCR[*][{\VERB[RV]{crd}}]$\;
+    $t2 = 0$\;
+    \For{$i=0$ {\bf upto} $4$}{
+        \If{$\INDEX{\VERB[RV]{cs}}{i}$} {
+            \For{$j=0$ {\bf upto} $32$}{
+
+                $j' =  ((j+2^i) \% 2^{i+1})+(j/(2^{i+1}) * 2^{i+1})$ \;
+
+                $ s = \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{j} ? j : j'$\;
+                $\INDEX{t2}{j} =  \INDEX{\VERB[RV]{t1}}{s} $ \;
+            }
+            $t1 = t2$\;
+        }
+    }
+    $\XCR[*][{\VERB[RV]{crd}}] = t1$ \;
+}
+
+% ----------------------------------------------------------------------------
+
+\XCINSTR{xc.ipbit}{crd, crs1, cs}{
+    A generic inverse permutation instruction.
+    Works just like the $\VERB[RV]{xc.pbit}$ instruction, but
+    propagates backwards through the buterfly network.
+}{
+    $t1 = \XCR[*][{\VERB[RV]{crd}}]$\;
+    $t2 = 0$\;
+    \For{$i=0$ {\bf upto} $4$}{
+        \If{$\INDEX{\VERB[RV]{cs}}{i}$} {
+            \For{$j=0$ {\bf upto} $32$}{
+                $k=4-i$ \;
+                $j' =  ((j+2^k) \% 2^{k+1})+(j/(2^{k+1}) * 2^{k+1})$ \;
+                $ s = \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{j} ? j : j'$\;
+                $\INDEX{t2}{j} =  \INDEX{\VERB[RV]{t1}}{s} $ \;
+            }
+            $t1 = t2$\;
+        }
+    }
+    $\XCR[*][{\VERB[RV]{crd}}] = t1$ \;
+}
+
+\XCINSTR{xc.pbyte}{crd, crs1, b0, b1, b2, b3}{
+    A byte level permutation instruction. Allows any byte in a source
+    word to be placed in any byte of a destination word.
+    This instruction can be used for fast endianness manipulation, and
+    a faster way to implement some permutation layers of the
+    $\VERB[RV]{xc.pbit}$ and 
+    $\VERB[RV]{xc.ipbit}$
+    instructions.
+}{
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b0}$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b1}$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b2}$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b3}$ \;
+}
+
+% ----------------------------------------------------------------------------
 
 \XCINSTR{xc.lut}{crd, crs1, crs2, crs3}{
   Apply an arbitrary $4$-bit input, $4$-bit output Look-up Table (LUT) 
@@ -959,55 +1044,6 @@ is considered invalid.
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}   \VERB[RV]{rtamt}$ \;
   }
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.pperm.w}{crd, crs1, b0, b1, b2, b3}{
-  Permute bytes   of                some $\XCR$ register,
-  storing the result in                another $\XCR$ register.
-}{
-  $t \ASN            \XCR[*][{\VERB[RV]{crs1}}]               $ \;
-  $           \XCR[*][{\VERB[RV]{crd}}]                \ASN \INDEX[ 8]{t}{\VERB[RV]{b3}} \CONS
-                                                            \INDEX[ 8]{t}{\VERB[RV]{b2}} \CONS
-                                                            \INDEX[ 8]{t}{\VERB[RV]{b1}} \CONS
-                                                            \INDEX[ 8]{t}{\VERB[RV]{b0}} $ \;
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.pperm.hx}{crd, crs1, b0, b1, b2, b3}{
-  Permute nibbles of a half-word in some $\XCR$ register,
-  storing the result in a half-word of another $\XCR$ register.
-  Note that the index 
-  $
-  \VERB[RV]{x} \in \SET{ 0, 1 }
-  $
-  is part of the opcode (and hence mnemonic).
-}{
-  $t \ASN \INDEX[16]{\XCR[*][{\VERB[RV]{crs1}}]}{\VERB[RV]{x}}$ \;
-  $\INDEX[16]{\XCR[*][{\VERB[RV]{crd}}]}{\VERB[RV]{x}} \ASN \INDEX[ 4]{t}{\VERB[RV]{b3}} \CONS
-                                                            \INDEX[ 4]{t}{\VERB[RV]{b2}} \CONS
-                                                            \INDEX[ 4]{t}{\VERB[RV]{b1}} \CONS
-                                                            \INDEX[ 4]{t}{\VERB[RV]{b0}} $ \;
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.pperm.bx}{crd, crs1, b0, b1, b2, b3}{
-  Permute crumbs  of a      byte in some $\XCR$ register,
-  storing the result in a      byte of another $\XCR$ register.
-  Note that the index 
-  $
-  \VERB[RV]{x} \in \SET{ 0, 1, 2, 3 }
-  $
-  is part of the opcode (and hence mnemonic).
-}{
-  $t \ASN \INDEX[ 8]{\XCR[*][{\VERB[RV]{crs1}}]}{\VERB[RV]{x}}$ \;
-  $\INDEX[ 8]{\XCR[*][{\VERB[RV]{crd}}]}{\VERB[RV]{x}} \ASN \INDEX[ 2]{t}{\VERB[RV]{b3}} \CONS
-                                                            \INDEX[ 2]{t}{\VERB[RV]{b2}} \CONS
-                                                            \INDEX[ 2]{t}{\VERB[RV]{b1}} \CONS
-                                                            \INDEX[ 2]{t}{\VERB[RV]{b0}} $ \;
 }
 
 % =============================================================================
