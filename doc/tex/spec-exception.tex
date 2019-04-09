@@ -15,7 +15,7 @@ the following:
 \item Any attempt to execute a
         valid \XCID instruction
       from a privilege mode which does not have access to the ISE
-      (per fields in $\SPR{XCCR}$)
+      (per fields in $\SPR{XCSR}$)
       will cause an
       illegal instruction exception.
 \item Any attempt to execute a
@@ -24,7 +24,7 @@ the following:
       will cause an 
       illegal instruction exception.
 \item Any access to the 
-      $\SPR{XCSR}$ or $\SPR{XCCR}$
+      $\SPR{XCSR}$ or $\SPR{XCSR}$
       CSRs from a privilege mode other than machine mode
       will cause an 
       illegal instruction exception.

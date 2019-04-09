@@ -32,11 +32,11 @@ a) one     required, baseline feature class
    plus
 b) several optional           feature classes
    which can be {\em selectively} supported to suit.
-To some extent, this mirrors the extensibility afforded by RV32I itself, 
+To some extent, this mirrors the extensibility afforded by RISC-V itself, 
 with similar motivation: doing so allows one to tailor the ISE (resp. ISA) 
-st. it suits a given context, which is important because some features are 
-applicable within a broad range of cryptographic workloads whereas others 
-are (more) specifically applicable (even niche).
+such that it suits a given context, which is important because some features
+are  applicable within a broad range of cryptographic workloads whereas
+others are (more) specifically applicable (even niche).
 
 The RISC-V naming convention~\cite[Section 22]{SCARV:RV:ISA:I:17} for ISEs
 uses a string of single-character identifiers to specify features realised
@@ -73,7 +73,7 @@ introduce
 \item $1$ additional register file
       (see \REFSEC{sec:spec:state:xcr}),
       and
-\item $2$ additional CSRs 
+\item $3$ additional CSRs
       (see \REFSEC{sec:spec:state:csr}),
 \end{itemize}
 
@@ -112,14 +112,18 @@ is included.
 All such instructions use a base address in $\GPR$, but {\em directly} load 
 and store to and from $\XCR$; this avoids having to first load content into 
 and then subsequently transfer it from $\GPR$.
-Although most are analogous to RV32I, there are some differences: note that
+Although most are analogous to the base RISC-V Integer ISA, there are some
+differences:
 
 \begin{itemize}
-\item variants that support different access granularity (e.g., half-word or
+\item Variants that support different access granularity (e.g., half-word or
       byte) are included; variants that support updating (or inserting, vs. 
-      overwriting) load semantics are also included,
-\item matching the context, access is considered to be unsigned throughout;
+      overwriting) load semantics are also included.
+\item Matching the context, access is considered to be unsigned throughout;
       there are no sign-extending variants, for example.
+\item XCrypto supports indexed load/store addressing, wherein the address
+      is the sum of two registers, in addition to the standard RISC-V
+      register-immediate addressing.
 \end{itemize}
 
 % =============================================================================
@@ -314,7 +318,7 @@ nor
 implicit (e.g., status flags for carry or borrow)
 state.
 Such an approach is particularly attractive when set within the context of 
-RV32I, because it avoids inclusion of status flags and so forces (somewhat 
+RISC-V, because it avoids inclusion of status flags and so forces (somewhat 
 high overhead) software-based carry and overflow management.
 
 % -----------------------------------------------------------------------------

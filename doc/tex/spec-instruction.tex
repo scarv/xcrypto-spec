@@ -9,17 +9,18 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.xcr2gpr}{rd, crs1}{
-  Move an $\XCR$ register to a $\GPR$ register.
+  Move an $\XCR$ register to a $\GPR$ register. The $\XCR$ register value is
+  zero padded upto $\RVXLEN$ bits.
 }{ 
-  $\GPR[*][{\VERB[RV]{rd}}] \ASN \XCR[*][{\VERB[RV]{crs1}}]$\;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT[\RVXLEN]{0}(\XCR[*][{\VERB[RV]{crs1}}])$\;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.gpr2xcr}{crd, rs1}{
-  Move a $\GPR$ register to an $\XCR$ register.
+  Move the low $\XCLEN$ bits of a $\GPR$ register to an $\XCR$ register.
 }{
-  $\XCR[*][{\VERB[RV]{crd}}] \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+  $\XCR[*][{\VERB[RV]{crd}}] \ASN \INDEX{\GPR[*][{\VERB[RV]{rs1}}]}{\XCLEN \RANGE 0}$\;
 }
 
 % -----------------------------------------------------------------------------

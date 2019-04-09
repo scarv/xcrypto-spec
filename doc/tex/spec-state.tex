@@ -5,7 +5,7 @@ It is important to recognise the overhead, wrt. both
 time  (e.g., due to it needing to be context switched) 
 and 
 space (e.g., wrt. additional logic),
-relating to {\em any} state added to RV32I by \XCID.
+relating to {\em any} state added by \XCID.
 However, it also seems reasonable to align the trade-off(s) involved with 
 existing, common cases such as ISEs for floating-point arithmetic (namely
 the standard 
@@ -35,13 +35,14 @@ x87 state, {\em must} be robustly mitigated.
 
 \XCID 
 demands one additional 
-$16$-element, $32$-bit register file;
-we refer to this as the $\XCR$ register file, distinguishing it from the
+$16$-element, $\XCLEN$-bit register file,
+where $\XCLEN = 32$.
+We refer to this as the $\XCR$ register file, distinguishing it from the
 general-purpose $\GPR$ register file specified by RV32I.
 Note that
 
 \begin{itemize}
-\item RV32I specifies~\cite[Section 2.1]{SCARV:RV:ISA:I:17} that
+\item RISC-V specifies~\cite[Section 2.1]{SCARV:RV:ISA:I:17} that
       $
       \GPR[*][0] = 0 ,
       $
@@ -67,7 +68,7 @@ Note that
       Doing so aligns with \REFSEC{sec:bg:concept}, where the host core is 
       pitched as a control-path for the co-processor: address computation,
       control-flow orchestration, etc. fall under the remit of the former, 
-      since they can be supported by RV32I as is.
+      since they can be supported by the base RISC-V ISA as is.
 \item The $\XCR$ register file must have all values set to zero on a reset.
 \end{itemize}    
 
@@ -78,7 +79,7 @@ Note that
 
 \XCID 
 Requires three additional
-non-standard, CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}.
+non-standard CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}.
 In practice one physical register is required, with different shadow
 versions existing at different privilege levels.
 Table \ref{tab:csr} shows the address space layout of the additional
