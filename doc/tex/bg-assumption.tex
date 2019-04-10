@@ -5,15 +5,28 @@
 
 \begin{itemize}
 
-\item We make no assumption about the value of $\RVXLEN$ for the base
-      architecture which \XCID extends.
-      \XCID is explicitly designed for use with microcontrollers, so
-      some design decisions will make more sense when considering
-      $\RVXLEN=32$.
+\item We make {\em no} assumption about the value of $\RVXLEN$ as defined
+      by the base ISA.  That is, \XCID can cater for instances where
+      $
+      \RVXLEN \in \SET{ 32, 64, 128 } ,
+      $
+      although, since it has a focus on micro-controller class host cores
+      per \REFSEC{sec:bg:concept},
+      $
+      \RVXLEN = 32
+      $
+      is the norm.
 
-\item We use an analogous variable $\XCLEN$, defined in section
-     \ref{sec:spec:state:xcr}, to denote the width of additional \XCID
-     state.
+\item We use $\XCLEN$ as an \XCID-specific analogue to $\RVXLEN$, in the
+      sense it defines the width of \XCID-specific state.  We considered
+      supporting data-path scalability, i.e., allowing $\XCLEN$ to scale
+      independent of $\RVXLEN$, but opted against this: instead, 
+      $
+      \XCLEN = 32 .
+      $
+      Note that \REFAPPX{appx:design} motivates this decision, and that,
+      within the specification of instruction semantics, we use either
+      $\XCLEN$ {\em or} $32$ if one is more readable than the other.
 
 \item \XCID demands interaction with an RNG, the concrete instantiation of 
       which is unspecified: we assume the RNG design follows best-practice,

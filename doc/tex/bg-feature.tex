@@ -34,9 +34,9 @@ b) several optional           feature classes
    which can be {\em selectively} supported to suit.
 To some extent, this mirrors the extensibility afforded by RISC-V itself, 
 with similar motivation: doing so allows one to tailor the ISE (resp. ISA) 
-such that it suits a given context, which is important because some features
-are  applicable within a broad range of cryptographic workloads whereas
-others are (more) specifically applicable (even niche).
+so it suits a given context, which is important because some features are 
+applicable within a broad range of cryptographic workloads whereas others 
+are (more) specifically applicable (even niche).
 
 The RISC-V naming convention~\cite[Section 22]{SCARV:RV:ISA:I:17} for ISEs
 uses a string of single-character identifiers to specify features realised
@@ -111,20 +111,13 @@ the    co-processor register file (i.e., $\XCR$)
 is included.
 All such instructions use a base address in $\GPR$, but {\em directly} load 
 and store to and from $\XCR$; this avoids having to first load content into 
-and then subsequently transfer it from $\GPR$.
-Although most are analogous to the base RISC-V Integer ISA, there are some
-differences:
-
-\begin{itemize}
-\item Variants that support different access granularity (e.g., half-word or
-      byte) are included; variants that support updating (or inserting, vs. 
-      overwriting) load semantics are also included.
-\item Matching the context, access is considered to be unsigned throughout;
-      there are no sign-extending variants, for example.
-\item XCrypto supports indexed load/store addressing, wherein the address
-      is the sum of two registers, in addition to the standard RISC-V
-      register-immediate addressing.
-\end{itemize}
+and then subsequently transfer it from $\GPR$.  Beyond this, note that some
+instances differ from the base ISA, for example
+a) no   instances support sign-extension,
+b) some instances support a register (vs. immediate) indexed addressing mode,
+c) some instances support non-word access granularities (e.g., half-word or byte),
+   and
+d) some instances support updating (or inserting, vs. overwriting) semantics.
 
 % =============================================================================
 
@@ -233,7 +226,7 @@ act to accelerate in software what would otherwise represent a high (even
 prohibitive) overhead.  \XCID adopts a similar approach, for example, via
 support
 (e.g., \VERB[RV]{xc.bop}; see \REFSEC{sec:spec:instruction:xc.bop})
-for {\em aribitrary} Boolean operations
+for {\em arbitrary} Boolean operations
 (cf. x86 \VERB{vpternlogd}~\cite[5-446--5-468]{SCARV:X86:2:18}, and Amiga blitter~\cite[Chapter 6]{SCARV:Amiga:85})
 vs. common fixed and so limited instances such as NOT, AND, OR, and XOR.
 
@@ -362,16 +355,30 @@ b) eliminating the need for look-up tables and associated memory access
 \subsubsection{Class-$3.2$: SHA3}
 \label{sec:bg:feature:3:2}
 
-These instructions are used to create accelerated, code-dense implementations
-of the Keccak family of sponge functions used in the SHA3 hash function.
+SHA3~\cite{SCARV:FIPS:202}
+specifies 
+a) the hash functions SHA3-224, SHA3-256, SHA3-384, and SHA3-512,
+   {\em plus}
+b) the eXtendable-Output Functions (XOFs) SHAKE128 and SHAKE256;
+in each case, the construction is based on an underlying instance of the
+Keccak algorithm (see, e.g.,~\cite{SCARV:BDPA:13}).  On one hand, an ISE
+that supports Keccak can therefore be exploited by all these use-cases;
+to do so, on the other hand, such an ISE must be general-purpose enough
+to accommodate associated parameterisations of Keccak.
 
-While other classes of \XCID instruction can accelerate the computation
-and transformation of the Keccak state array, the SHA3 class of instruction
-is used to accelerate state index address generation.
-
-For implementations where code density is a constraint, and loop-unrolling
-based performance optimisations are not an option, these instructions
-very quickly and compactly compute the indexes into the Keccak state arrays
-based on the loop counter variables.
+While various {\em other} \XCID instruction classes support computation
+and/or transformation wrt. the Keccak state matrix, {\em this} class is
+focused on the generation of associated indexes (or addresses).  It is
+motivated by a simple observation:
+a) generation of said indexes can represent a significant component of
+   Keccak evaluation, so represent a optimisation target of value,
+   and
+b) various unrolling techniques (cf.~\cite{SCARV:BDPAK:12}) can reduce 
+   execution time by translating variable indexes into constants; they
+   may imply an associated disadvantage, however, wrt. memory footprint
+   and memory access (i.e., instruction fetches).
+In essence therefore, instructions in this class optimise generation of
+indexes {\em without} unrolling; this yields efficient implementations
+in both time {\em and} space.
 
 % =============================================================================

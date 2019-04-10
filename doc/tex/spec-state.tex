@@ -21,7 +21,8 @@ c) additional (specialised) functionality;
 a similar argument is true of \XCID, but motivated by a different context
 (i.e., cryptographic vs. floating-point workloads).
 
-Note that, particularly due to the nature of workloads supported by \XCID,
+Note that, 
+particularly due to the nature of workloads supported by \XCID,
 challenges relating to management of additional state are important.  For
 example, attack vectors such as 
 LazyFP~\cite{SCARV:StePre:18}, 
@@ -34,14 +35,15 @@ x87 state, {\em must} be robustly mitigated.
 \label{sec:spec:state:xcr}
 
 \XCID 
-demands one additional 
-$16$-element, $\XCLEN$-bit register file,
-where $\XCLEN = 32$.
+requires one additional 
+$16$-element, $\XCLEN$-bit register file.
 We refer to this as the $\XCR$ register file, distinguishing it from the
-general-purpose $\GPR$ register file specified by RV32I.
+general-purpose $\GPR$ register file specified by the base ISA.
 Note that
 
 \begin{itemize}
+\item Upon reset of \XCID,
+            the $\XCR$ register file {\em must} be reset (cf.~\REFSEC{sec:spec:instruction:xc.init}).
 \item RISC-V specifies~\cite[Section 2.1]{SCARV:RV:ISA:I:17} that
       $
       \GPR[*][0] = 0 ,
@@ -68,8 +70,7 @@ Note that
       Doing so aligns with \REFSEC{sec:bg:concept}, where the host core is 
       pitched as a control-path for the co-processor: address computation,
       control-flow orchestration, etc. fall under the remit of the former, 
-      since they can be supported by the base RISC-V ISA as is.
-\item The $\XCR$ register file must have all values set to zero on a reset.
+      since they can be supported by the base ISA as is.
 \end{itemize}    
 
 % =============================================================================
@@ -77,19 +78,12 @@ Note that
 \subsubsection{Control and Status Registers (CSRs)}
 \label{sec:spec:state:csr}
 
-\XCID 
-Requires three additional
-non-standard CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17}.
-In practice one physical register is required, with different shadow
-versions existing at different privilege levels.
-Table \ref{tab:csr} shows the address space layout of the additional
-CSRs.
-
-\begin{table}[h]
+\begin{table}[p]
 \begin{center}
-\begin{tabular}{|lcc|}
+\begin{tabular}{|ccc|}
 \hline
-       Name      & Address         & Access     \\ \hline
+Name          & Address         & Access     \\ 
+\hline
 $\SPR{mxcsr}$ & \RADIX{7C0}{16} & read/write \\
 $\SPR{sxcsr}$ & \RADIX{DC0}{16} & read/write \\
 $\SPR{uxcsr}$ & \RADIX{CC0}{16} & read       \\
@@ -100,119 +94,174 @@ $\SPR{uxcsr}$ & \RADIX{CC0}{16} & read       \\
 \label{tab:csr}
 \end{table}
 
-\paragraph{$\SPR{mxcsr}$ Register}
-The machine level \XCID CSR is responsible for:
-feature identification,
-state dirtiness tracking and
-controlling supervisor and user level access
-to the \XCID registers.
-Figure \ref{fig:mxcsr} shows the layout of the bitfields within the register.
-Table \ref{tab:mxcsr} describes each field of the $\SPR{mxcsr}$ in detail.
-
-\begin{figure}[h!]
+\begin{figure}[p]
 \begin{center}
 \begin{bytefield}[bitwidth={1.4em},bitheight={8.0ex},endianness=big]{32}
 \bitheader{0-31}               
 \\
   \bitbox{15}{\rule{\width}{\height}}
 & \bitbox{ 1}{\rule{\width}{\height}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $SHA3     $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $AES      $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{16}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 8}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 4}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 2}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $PACK_{ 1}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $MP       $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $BIT      $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $MEM      $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $RNG      $}}
-& \bitbox{ 2}{\rotatebox{90}{\tiny $XS       $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{SHA3}     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{AES }     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{16}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 8}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 4}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 2}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 1}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{MP  }     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{BIT }     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{MEM }     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{RNG }     $}}
+& \bitbox{ 2}{\rotatebox{90}{\tiny $\ID{XS  }     $}}
 & \bitbox{ 1}{\rule{\width}{\height}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $S        $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $U        $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{S   }     $}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{U   }     $}}
 \\
 \end{bytefield}
 \end{center}
-\caption{A diagrammatic description of the $\SPR{mxcsr}$ register. Blanked out bits are reserved
-and read as zero.}
+\caption{A diagrammatic description of the $\SPR{mxcsr}$ register; blanked regions are reserved, so yield zero when the register is read.}
 \label{fig:mxcsr}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[p]
 \begin{center}
 \begin{tabular}{|l|c|c|l|}
 \hline
-Field        & Index  & Access & Description                                                                         \\ \hline
-$U         $ & $ 0$   & WLRL   & Indicates if \XCID is accessible in user mode                                       \\
-$S         $ & $ 1$   & WLRL   & Indicates if \XCID is accessible in supervisor mode                                 \\
-$XS        $ & $4:3$  & R/O    & Indicates whether \XCID registers need saving on a context switch                   \\
-$RNG       $ & $ 5$   & R/O    & Is RNG  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$MEM       $ & $ 6$   & R/O    & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$BIT       $ & $ 7$   & R/O    & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$MP        $ & $ 8$   & R/O    & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$PACK_{ 1} $ & $ 9$   & R/O    & Are operations on sub-word  of $w = 32$ bits supported (set), or not (clear) \\
-$PACK_{ 2} $ & $10$   & R/O    & Are operations on sub-words of $w = 16$ bits supported (set), or not (clear) \\
-$PACK_{ 4} $ & $11$   & R/O    & Are operations on sub-words of $w =  8$ bits supported (set), or not (clear) \\
-$PACK_{ 8} $ & $12$   & R/O    & Are operations on sub-words of $w =  4$ bits supported (set), or not (clear) \\
-$PACK_{16} $ & $13$   & R/O    & Are operations on sub-words of $w =  2$ bits supported (set), or not (clear) \\
-$AES       $ & $14$   & R/O    & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$SHA3      $ & $15$   & R/O    & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ \hline
+Field             & Index          & Access & Description                                                                         \\ 
+\hline
+$\ID{U   }      $ & $           0$ & WLRL   & Indicates whether or not \XCID is accessible in user mode                           \\
+$\ID{S   }      $ & $           1$ & WLRL   & Indicates whether or not \XCID is accessible in supervisor mode                     \\
+$\ID{XS  }      $ & $ 4 \RANGE  3$ & R/O    & Indicates whether or not the \XCID state is dirty                                   \\
+$\ID{RNG }      $ & $           5$ & R/O    & Is RNG  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$\ID{MEM }      $ & $           6$ & R/O    & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$\ID{BIT }      $ & $           7$ & R/O    & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$\ID{MP  }      $ & $           8$ & R/O    & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$\ID{PACK}_{ 1} $ & $           9$ & R/O    & Are operations on sub-word  of $w = 32$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 2} $ & $          10$ & R/O    & Are operations on sub-words of $w = 16$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 4} $ & $          11$ & R/O    & Are operations on sub-words of $w =  8$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 8} $ & $          12$ & R/O    & Are operations on sub-words of $w =  4$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{16} $ & $          13$ & R/O    & Are operations on sub-words of $w =  2$ bits supported (set), or not (clear)        \\
+$\ID{AES }      $ & $          14$ & R/O    & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
+$\ID{SHA3}      $ & $          15$ & R/O    & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ 
+\hline
 \end{tabular}
 \end{center}
 \caption{A tabular description of the $\SPR{mxcsr}$ register.}
 \label{tab:mxcsr}
 \end{table}
 
-The $\SPR{U}$ and $\SPR{S}$ bits allow access to \XCID instructions and 
-state in user and supervisor mode respectively.
-If an \XCID instruction is executed in $U$ or $S$ mode, and the 
-corresponding bit is set, the instruction executes as normal.
-Any attempt to execute an \XCID instruction in $U$ or $S$ mode when the 
-corresponding bit is clear causes an illegal opcode exception.
-If $\SPR{U}$ is set, then $\SPR{S}$ must also be set. Any attempt to write
-$\SPR{U}$ and $\SPR{S}$
-such that $\SPR{U}=1$ and $\SPR{S}=0$ will cause an illegal opcode exception.
+\XCID 
+requires three additional
+non-standard CSRs~\cite[Section 2]{SCARV:RV:ISA:II:17},
+outlined by \REFTAB{tab:csr}.
+In practice, only {\em one} additional register is required for
+$\SPR{mxcsr}$; $\SPR{sxcsr}$ and $\SPR{uxcsr}$ are shadowed versions of said register, accessible
+within specific modes.
 
-The $\SPR{XS}$ field is used to indicate whether \XCID state is dirty and must be saved
-on a context switch.
-This field is analogous to the $\SPR{FS}$ field of the $\SPR{mstatus}$ register
-described in \cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17}.
-We put the $\SPR{XS}$ field in the low bits of the register to allow
-atomic accesses with a single \VERB[RV]{csr*i} instruction, rather than needing
-reads, shifts and masks from the high bits.
+\paragraph{The $\SPR{mxcsr}$ register}
+
+The
+$\SPR{mxcsr}$
+register is a machine mode CSR is responsible for
+ inspecting (e.g., feature identification)
+and 
+controlling (e.g., supervisor and user mode access)
+\XCID.
+In combination, \REFTAB{tab:mxcsr} and \REFFIG{fig:mxcsr} provide an
+overview of the register.
 
 \begin{itemize}
-\item $00$ - \XCID is disabled. All \XCID instructions raise an illegal opcode
-    exception.
-    Implementations may use this state \XCID to implement power saving 
-    optimisations.
-\item $01$ - \XCID is enabled, with all \XCID registers holding their initial
-    / post-reset value.
-\item $10$ - \XCID is enabled, and no state needs saving.
-\item $11$ - \XCID is enabled, and state needs saving on a context switch.
+
+\item The 
+      $\SPR{mxcsr}[*][\ID{U}]$
+      and
+      $\SPR{mxcsr}[*][\ID{S}]$
+      fields control \XCID wrt. user and supervisor mode respectively.  
+      Imagine an \XCID instruction is executed in 
+      user                         (resp. supervisor) 
+      mode: if 
+      $\SPR{mxcsr}[*][\ID{U}] = 1$ (resp. $\SPR{mxcsr}[*][\ID{S}] = 1$)
+      the instruction executes as normal, otherwise, if
+      $\SPR{mxcsr}[*][\ID{U}] = 0$ (resp. $\SPR{mxcsr}[*][\ID{S}] = 0$),
+      an illegal opcode exception results.
+      If 
+      $\SPR{mxcsr}[*][\ID{U}] = 1$
+      then is {\em must} be true that
+      $\SPR{mxcsr}[*][\ID{S}] = 1$;
+      if the fields are updated st.
+      $\SPR{mxcsr}[*][\ID{U}] = 1$
+      and
+      $\SPR{mxcsr}[*][\ID{U}] = 1$,
+      an illegal opcode exception results.
+
+\item The 
+      $\SPR{mxcsr}[*][\ID{XS}]$
+      field indicates whether or not the \XCID state is dirty (i.e., it
+      has been updated), and must be preserved during a context switch;
+      this field is analogous to the 
+      $\SPR{mstatus}[*][\ID{FS}]$
+      field described in~\cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17}.
+      More specifically,
+      \[
+      \begin{array}{l@{\;}c@{\;}rcl}
+      \SPR{mxcsr}[*][\ID{XS}] &=& \RADIX{00}{2} &\rightarrow& \mbox{\XCID is disabled                                                                  } \\
+      \SPR{mxcsr}[*][\ID{XS}] &=& \RADIX{01}{2} &\rightarrow& \mbox{\XCID is  enabled, state is initialised (i.e.,            values are per reset)    } \\
+      \SPR{mxcsr}[*][\ID{XS}] &=& \RADIX{10}{2} &\rightarrow& \mbox{\XCID is  enabled; state is clean       (i.e., {\em   no} values have been updated)} \\
+      \SPR{mxcsr}[*][\ID{XS}] &=& \RADIX{11}{2} &\rightarrow& \mbox{\XCID is  enabled; state is dirty       (i.e., {\em some} values have been updated)} \\
+      \end{array}
+      \]
+      noting that
+
+      \begin{itemize}
+      \item the encodings for
+            $\SPR{mxcsr}[*][\ID{XS}]$
+            mirror those for 
+            $\SPR{mstatus}[*][\ID{FS}]$,
+            e.g., per~\cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17},
+      \item where a change from
+            $\SPR{mxcsr}[*][\ID{XS}] = \RADIX{00}{2}$
+            to
+            $\SPR{mxcsr}[*][\ID{XS}] = \RADIX{01}{2}$
+            occurs, 
+            the $\XCR$ register file {\em must} be reset (cf.~\REFSEC{sec:spec:instruction:xc.init}),
+      \item $\SPR{mxcsr}[*][\ID{XS}]$ is deliberately located toward the
+            least-significant end of $\SPR{mxcsr}$; this allows atomic 
+            access via one \VERB[RV]{csrrwi} instruction, for example,
+      \item in the case where
+            $\SPR{mxcsr}[*][\ID{XS}] = \RADIX{00}{2}$,
+            {\em all} \XCID instructions (even when executed in machine
+            mode) result in an illegal opcode exception; since \XCID is
+            essentially disabled, this fact {\em may} be harnessed, for 
+            example, to realise a form of power saving optimisation.
+      \end{itemize}            
+
 \end{itemize}
 
-These encodings mirror what is defined in
-\cite[Section 3.1.6.5]{SCARV:RV:ISA:II:17}.
-When the $\SPR{XS}$ bits change from $00$ to $01$, the $\XCR$ registers must be
-set to their post-reset value.
+\paragraph{The $\SPR{uxcsr}$ and $\SPR{sxcsr}$ registers}
 
-Note that if \XCID is "off" as per $\SPR{XS}=0$, then even \XCID instructions
-executed in machine mode will also raise illegal opcode exceptions.
-
-\paragraph{$\SPR{sxcsr}$ and $\SPR{uxcsr}$ Registers}
-
-The $\SPR{sxcsr}$ and $\SPR{uxcsr}$ registers act as shadows of the 
-$\SPR{mxcsr}$. They behave identically except for the following points:
+The 
+$\SPR{uxcsr}$ 
+and 
+$\SPR{sxcsr}$ 
+registers are user and supervisor mode CSRs respectively, acting as
+shadowed versions of the machine mode $\SPR{mxcsr}$.  As such, their
+definition and semantics are identically, bar the following caveats:
 
 \begin{itemize}
-\item If the $\SPR{S}$ bit of $\SPR{mxcsr}$ is clear, then the
-    $\SPR{sxcsr}$ and $\SPR{uxcsr}$ CSRs read zeros when read, and
-    raise an illegal opcode exception when written.
-\item If the $\SPR{U}$ bit of $\SPR{mxcsr}$ is clear, then the
-    $\SPR{uxcsr}$ reads zeros when read, and
-    raises an illegal opcode exception when written.
+\item If
+      $\SPR{mxcsr}[*][\ID{S}] = 0$,
+      then
+      $\SPR{uxcsr}$ 
+      and 
+      $\SPR{sxcsr}$ 
+      yield  zero when read, 
+      and result  in an illegal opcode exception when written.
+\item If
+      $\SPR{mxcsr}[*][\ID{U}] = 0$,
+      then
+      $\SPR{uxcsr}$ 
+      yields zero when read, 
+      and results in an illegal opcode exception when written.
 \end{itemize}
 
 % =============================================================================
@@ -232,9 +281,8 @@ $\SPR{mxcsr}$. They behave identically except for the following points:
       All other registers, 
       i.e., $\XCR[*][8]$ upward,
       are considered to be temporaries.
-\item Any $\XCR$ registers pushed to the stack should be stored 
-      in ascending order.
-      That is, since the stack grows downwards, 
+\item Any $\XCR$ registers pushed to the stack should be stored in ascending 
+      order.  That is, since the stack grows downwards, 
       $\XCR[*][i]$
       should be written to a lower address than
       $\XCR[*][j]$
@@ -243,7 +291,7 @@ $\SPR{mxcsr}$. They behave identically except for the following points:
       example.
 \item Any $\XCR$ registers pushed to the stack should be stored 
       at the end of the stack frame, 
-      i.e., {\em after} content associated with RV32I (plus any standard 
+      i.e., {\em after} content associated with base ISA (plus any standard 
       extensions thereof, e.g., floating-point content).
 \end{itemize}
 
