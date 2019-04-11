@@ -5,8 +5,8 @@
 
 \begin{itemize}
 
-\item Instruction mnemonics follow a (somewhat) consistent scheme; they
-      all include a domain-separating prefix \VERB[RV]{xc}, and, where
+\item \XCID instruction mnemonics follow a (somewhat) consistent scheme; 
+      they all include a domain-separating prefix \VERB[RV]{xc}, and, if
       need be, a suffix intended to identify specific variants.  These 
       include
       \[
@@ -29,26 +29,6 @@
          or
       b) a (uncached) scratch-pad memory,
       by the co-processor alone.
-\item Per \REFSEC{sec:spec:instruction:2:4}, 
-      \VERB[RV]{xc.mix.l}
-      and
-      \VERB[RV]{xc.mix.h}
-      use the immediate 
-      $ 
-      0 \leq \VERB[RV]{rtamt} < 16 
-      $ 
-      to right-rotate $\XCR[*][{\VERB[RV]{crs1}}]$ by $d$ bits where
-      $0  \leq d < 16$
-      and
-      $16 \leq d < 32$
-      respectively.
-      The specification of {\em two} instructions vs. {\em one} that can
-      deal with 
-      $0  \leq d < 32$
-      is motivated by instruction encoding: it is easier to avoid having
-      a dedicated $5$-bit immediate field, reusing the existing $4$-bit
-      field, e.g., as used by
-      \VERB[RV]{xc.bop}.
 
 \end{itemize}
 
@@ -71,16 +51,56 @@
       note that, in a sense, RISC-V is word size scalable: it can cater for
       implementations that, e.g., have a $32$-bit instructions but a $32$-,
       $64$-, or $128$-bit $\GPR$ register file (and so also address space). 
-      The same concept is useful wrt. the co-processor, and indeed, for the
-      multi-precision operations
-      (per \REFSEC{sec:spec:instruction:2:4},
-      in particular.
 
-      The current design considers sub-{\em byte} (e.g., $4$-bit), sub-word
-      sizes; doing so is motivated, e.g., by their utility in some classes 
-      of light-weight block cipher.  However, it does not currently explore 
-      the potential of a scalable word size: it assumes the general-purpose
-      and $\XCR$ register file word sizes are {\em both} $32$ bits.
+      \begin{itemize}
+      \item Within instruction class $2.4$, \XCID considers sub-{\em byte} 
+            (e.g., $4$-bit), sub-word sizes; doing so is motivated, e.g., 
+            by their utility in some classes of light-weight block cipher.  
+
+      \item Currently, \XCID does not explore the potential of a scalable 
+            word size: it assumes a fixed $\XCLEN = 32$, though retaining
+            compatibility wrt. $\XLEN \in \SET{ 32, 64, 128 }$.
+
+            Doing so {\em is} clearly plausible: one could imagine
+            a) equipping $\SPR{mxcsr}$ with a field to reflect $\XCLEN$,
+               then
+            b) making selected alterations to instruction specifications,
+               for example
+
+            \begin{itemize}
+            \item when $\XCLEN \neq \XLEN$, 
+                  some instructions
+                  (e.g., in class $1$:   \VERB[RV]{xc.gpr2xcr} and \VERB[RV]{xc.gpr2xcr})
+                  would need a specification that caters for the differing 
+                  sizes of registers in $\XCR$ and $\GPR$,
+            \item for $\XCLEN > 32$, 
+                  some instructions
+                  (e.g., class $1.1$: \VERB[RV]{xc.rngsamp})
+                  imply a significant implementation overhead,
+            \item for $\XCLEN > 32$, 
+                  some instructions
+                  (e.g., class $2.1$: \VERB[RV]{xc.scatter.b} and \VERB[RV]{xc.gather.b})
+                  would be to be (re)specified in a more general form,
+                  and
+            \item for $\XCLEN > 32$, 
+                  some instructions
+                  (e.g., class $3.1$: \VERB[RV]{xc.aesmix})
+                  would be nonsensical, i.e., need removing or replacing.
+            \end{itemize}
+
+            \noindent
+            Beyond this, however, the question is whether it has any value;
+            this is harder to answer, so {\em may} represent an interesting 
+            experiment to consider more concretely.
+            For example, $\XCLEN > 32$ would apply naturally to, and hence
+            represent an advantage to instructions in class $2.4$ (e.g.,
+            \VERB[RV]{xc.add.2}).  However, it is unclear whether such an
+            advantage would be larger than simply considering $\XLEN > 32$
+            {\em without} \XCID at all, or indeed alternative paradigms 
+            such as the standard V~\cite[Section 17]{SCARV:RV:ISA:I:17} 
+            extension.
+
+      \end{itemize}
 
 \item Consider a general case, wherein a given ISA has instruction formats
       that allow access to $n$ general-purpose registers, st. 

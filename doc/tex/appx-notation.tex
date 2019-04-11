@@ -65,7 +65,7 @@
       \mbox       {byte} &\Longrightarrow& n &=&  8 \\
       \mbox  {half-word} &\Longrightarrow& n &=& 16 \\
       \mbox       {word} &\Longrightarrow& n &=& 32 \\
-      \mbox{double-word} &\Longrightarrow& n &=& 32 \\
+      \mbox{double-word} &\Longrightarrow& n &=& 64 \\
       \end{array}
       \]
       where perhaps all but the first are fairly standard.
@@ -80,9 +80,9 @@
       $
       x_i \mapsto x_i \cdot \IND{x}^i .
       $
-\item The operators $\NOT$, $\AND$, $\IOR$ and $\XOR$ denote Boolean NOT, AND,
-      OR and XOR respectively, with $\NAND$, $\NIOR$ and $\NXOR$ denoting NAND,
-      NOR and NXOR; all of these may be overloaded to cater for bit-sequences
+\item The operators $\NOT$, $\AND$, $\IOR$, and $\XOR$ denote Boolean NOT, AND,
+      OR, and XOR respectively, with $\NAND$, $\NIOR$ and $\NXOR$ denoting NAND,
+      NOR, and NXOR; all of these may be overloaded to cater for bit-sequences
       rather than simply bits.
 \item $\HW( X )$
       denotes the Hamming weight   of      bit-sequence  $X$,         st.
