@@ -59,7 +59,7 @@
 
       \item Currently, \XCID does not explore the potential of a scalable 
             word size: it assumes a fixed $\XCLEN = 32$, though retaining
-            compatibility wrt. $\XLEN \in \SET{ 32, 64, 128 }$.
+            compatibility wrt. $\RVXLEN \in \SET{ 32, 64, 128 }$.
 
             Doing so {\em is} clearly plausible: one could imagine
             a) equipping $\SPR{mxcsr}$ with a field to reflect $\XCLEN$,
@@ -68,7 +68,7 @@
                for example
 
             \begin{itemize}
-            \item when $\XCLEN \neq \XLEN$, 
+            \item when $\XCLEN \neq \RVXLEN$, 
                   some instructions
                   (e.g., in class $1$:   \VERB[RV]{xc.gpr2xcr} and \VERB[RV]{xc.gpr2xcr})
                   would need a specification that caters for the differing 
@@ -95,7 +95,7 @@
             For example, $\XCLEN > 32$ would apply naturally to, and hence
             represent an advantage to instructions in class $2.4$ (e.g.,
             \VERB[RV]{xc.add.2}).  However, it is unclear whether such an
-            advantage would be larger than simply considering $\XLEN > 32$
+            advantage would be greater than just considering $\RVXLEN > 32$
             {\em without} \XCID at all, or indeed alternative paradigms 
             such as the standard V~\cite[Section 17]{SCARV:RV:ISA:I:17} 
             extension.
