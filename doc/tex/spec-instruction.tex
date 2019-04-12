@@ -9,37 +9,40 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.init}{}{
-Initialise all XCrypto architectural state to zero.
-This instruction is designed to be used during a context switch to prevent
-a) logical leakage and 
-b) side-channel leakage.
-Once any state is saved, this instruction is executed to efficiently set all
-XCrypto registers to an initial value.
-An implementation may use this instruction to implement any micro-architectural
-enforcement of process non-interference.
-This might include flushing any time-multiplexed state, or clearing intermediate
-value / pipeline registers to prevent side channel leakage.
+  Initialise \XCID state, matching post-reset values.
+  This instruction is motivated by the requirement to prevent
+  1)      logical information leakage,
+     and 
+  2) side-channel information leakage.
+  The former case
+  essentially relates to process isolation: \VERB[RV]{xc.init} can be
+  used during a context switch, as a way to prevent exposure of \XCID
+  state associated with one process to another.
+  The latter case
+  relates to the proposal of Ge et al.~\cite{SCARV:GeYarHei:18}: they
+  argue that a mechanism to reset micro-architectural state is vital,
+  because doing so is a requirement for robust prevention of certain
+  types of side-channel attack.  \VERB[RV]{xc.init} can be seen as a
+  hook against which implementations realise this requirement.
 
-The aim of this instruction is also to allow implementers to give software an
-explicit mechanism to clear any state which is not otherwise architecturally
-visible\cite{SCARV:GeYarHei:18}.
-This makes the exact implementation of the instruction very device dependent,
-even if the architectural effects are limited and explicitly defined.
-Any implementation which uses \VERB[RV]{xc.init} to clear micro-architectural
-state must document exactly what it does, and {\em how} it does it.
-For example, simply setting an intermediate register value to zero will
-potentially leak it's hamming weight in a power or EM side channel.
+  Keep in mind that the semantics of \VERB[RV]{xc.init} imply a need
+  for diversity wrt. their implementation.  Put another way, although
+  the architectural effect of \VERB[RV]{xc.init} can be specified in
+  a precise way, the micro-architectural effect fundamentally depends 
+  on the micro-architecture.  With this in mind, an implementation of
+  \XCID {\em must} clearly state said effect, 
+  i.e., {\em what} \VERB[RV]{xc.init} does and {\em how} it does so.
 }{
-    \For{$i=0$ {\bf upto} $15$}{
-        $\XCR[*][{\VERB[RV]{i}}] \ASN 0$
-    }
+  \For{$i = 0$ {\bf upto} $15$}{
+    $\XCR[*][{\VERB[RV]{i}}] \ASN 0$\;
+  }
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.xcr2gpr}{rd, crs1}{
-  Move an $\XCR$ register to a $\GPR$ register. The $\XCR$ register value is
-  zero padded upto $\RVXLEN$ bits.
+  Move                                        an $\XCR$ register to a  $\GPR$ register;
+  the $\XCR$ register is zero-extended to $\RVXLEN$ bits.
 }{ 
   $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT[\RVXLEN]{0}(\XCR[*][{\VERB[RV]{crs1}}])$\;
 }
@@ -47,9 +50,9 @@ potentially leak it's hamming weight in a power or EM side channel.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.gpr2xcr}{crd, rs1}{
-  Move the low $\XCLEN$ bits of a $\GPR$ register to an $\XCR$ register.
+  Move the least-significant $\XCLEN$-bits of a  $\GPR$ register to an $\XCR$ register.
 }{
-  $\XCR[*][{\VERB[RV]{crd}}] \ASN \INDEX{\GPR[*][{\VERB[RV]{rs1}}]}{\XCLEN \RANGE 0}$\;
+  $\XCR[*][{\VERB[RV]{crd}}] \ASN \INDEX{\GPR[*][{\VERB[RV]{rs1}}]}{\XCLEN - 1 \RANGE 0}$\;
 }
 
 % -----------------------------------------------------------------------------
@@ -77,12 +80,18 @@ potentially leak it's hamming weight in a power or EM side channel.
 \XCINSTR{xc.ld.bu}{crd, h, b, imm11(rs1)}{
   Load a      byte from memory
   into a specific      byte of an $\XCR$ register.
-  If \VERB[RV]{h} or \VERB[RV]{b} are non-zero,
-  the other bytes in the destination register are left un-modified.
-  If \VERB[RV]{h} and \VERB[RV]{b} are zero,
-  the least-significant byte of the destination register
-  is set to the loaded byte, and all other bytes in the
-  destination register are cleared.
+  Beyond this, note that
+  1) if
+     $\VERB[RV]{h} =    0$ 
+     and
+     $\VERB[RV]{b} =    0$,
+     all other      bytes in the $\XCR$ register are set to zero,
+     whereas
+  2) if 
+     $\VERB[RV]{h} \neq 0$ 
+     or 
+     $\VERB[RV]{b} \neq 0$,
+     no  other      bytes in the $\XCR$ register are modified.
 }{
   $addr                                          \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
   $index                                         \ASN ( \VERB[RV]{cc} \CONS \VERB[RV]{cd} ) \XOR 0$ \;
@@ -98,13 +107,24 @@ potentially leak it's hamming weight in a power or EM side channel.
 
 \XCINSTR{xc.ld.hu}{crd, h,    imm11(rs1)}{
   Load a half-word from memory
-  into a specific half-word of an $\XCR$ register,
-  If \VERB[RV]{h} is non-zero,
-  the low half-word of the destination register is left un-modified.
-  If \VERB[RV]{h} is zero,
-  the least-significant half-word of the destination register
-  is set to the loaded half-word, and all other half-words in the
-  destination register are cleared.
+  into a specific half-word of an $\XCR$ register.
+  Beyond this, note that
+  1) if
+     $\VERB[RV]{h} =    0$ 
+     and
+     $\VERB[RV]{b} =    0$,
+     all other half-words in the $\XCR$ register are set to zero,
+     whereas
+  2) if 
+     $\VERB[RV]{h} \neq 0$ 
+     or 
+     $\VERB[RV]{b} \neq 0$,
+     no  other half-words in the $\XCR$ register are modified.
+  If the effective address $addr$ is not half-word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
 }{
   $addr                                                                    \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
   $index_0                                       \ASN ( \VERB[RV]{cc} \CONS             0 ) \XOR 0$ \;
@@ -122,6 +142,11 @@ potentially leak it's hamming weight in a power or EM side channel.
 \XCINSTR{xc.ld.w} {crd,        imm11(rs1)}{
   Load a      word from memory 
   into                         an $\XCR$ register.
+  If the effective address $addr$ is not      word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
 }{
   $addr                                          \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
   $index_0                                       \ASN                                            0$ \;
@@ -132,6 +157,77 @@ potentially leak it's hamming weight in a power or EM side channel.
   $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_1} \ASN \MEM[*][{addr+1}]$ \;
   $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_2} \ASN \MEM[*][{addr+2}]$ \;
   $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_3} \ASN \MEM[*][{addr+3}]$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.bu}{crd(b0), rs1, rs2}{
+  Load a      byte from memory
+  into a specific      byte of an $\XCR$ register;
+  Beyond this, note that
+  1) if
+     $\VERB[RV]{b0} =    0$,
+     all other      bytes in the $\XCR$ register are set to zero,
+     whereas
+  2) if 
+     $\VERB[RV]{b0} \neq 0$,
+     no  other      bytes in the $\XCR$ register are modified.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
+  \If{$index = 0$}{
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
+  }
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.hu}{crd(b0), rs1, rs2}{
+  Load a half-word from memory
+  into a specific half-word of an $\XCR$ register;
+  Beyond this, note that
+  1) if
+     $\VERB[RV]{b0} =    0$,
+     all other half-words in the $\XCR$ register are set to zero,
+     whereas
+  2) if 
+     $\VERB[RV]{b0} \neq 0$,
+     no  other half-words in the $\XCR$ register are modified.
+  If the effective address $addr$ is not half-word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $index \ASN \VERB[RV]{b0}$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index+1} \ASN \MEM[*][{addr+1}]$ \;
+  \If{$index = 0$}{
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
+    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
+  }
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.w}{crd, rs1, rs2}{
+  Load a      word from memory 
+  into                         an $\XCR$ register.
+  If the effective address $addr$ is not      word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \MEM[*][{addr+0}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN \MEM[*][{addr+1}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN \MEM[*][{addr+2}]$ \;
+  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN \MEM[*][{addr+3}]$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -152,14 +248,19 @@ potentially leak it's hamming weight in a power or EM side channel.
 
 \XCINSTR{xc.st.h} {rs2, h,    imm11(rs1)}{
   Store a specific half-word of an $\XCR$ register into memory.
+  If the effective address $addr$ is not      word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{sh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm11} = \VERB[RV]{imm11hi} \CONS \VERB[RV]{imm11lo} .
   $
 }{
   $addr            \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
-  $index_0         \ASN ( \VERB[RV]{cc} \CONS             0 ) \XOR 0$ \;
-  $index_1         \ASN ( \VERB[RV]{cc} \CONS             0 ) \XOR 1$ \;
+  $index_0         \ASN ( \VERB[RV]{cc} \CONS             0 ) \XOR 0 $ \;
+  $index_1         \ASN ( \VERB[RV]{cc} \CONS             0 ) \XOR 1 $ \;
   $\MEM[*][addr+0] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_0}$ \;
   $\MEM[*][addr+1] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_1}$ \;
 }
@@ -168,16 +269,21 @@ potentially leak it's hamming weight in a power or EM side channel.
 
 \XCINSTR{xc.st.w} {rs2,       imm11(rs1)}{
   Store                         an $\XCR$ register into memory.
+  If the effective address $addr$ is not      word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{sw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm11} = \VERB[RV]{imm11hi} \CONS \VERB[RV]{imm11lo} .
   $
 }{
   $addr            \ASN \GPR[*][{\VERB[RV]{rs1}}] + \EXT[32]{\pm}( \VERB[RV]{imm11} )$ \;
-  $index_0         \ASN                                            0$ \;
-  $index_1         \ASN                                            1$ \;
-  $index_2         \ASN                                            2$ \;
-  $index_3         \ASN                                            3$ \;
+  $index_0         \ASN                                            0 $ \;
+  $index_1         \ASN                                            1 $ \;
+  $index_2         \ASN                                            2 $ \;
+  $index_3         \ASN                                            3 $ \;
   $\MEM[*][addr+0] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_0}$ \;
   $\MEM[*][addr+1] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_1}$ \;
   $\MEM[*][addr+2] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index_2}$ \;
@@ -186,86 +292,8 @@ potentially leak it's hamming weight in a power or EM side channel.
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.bu}{crd(b0), rs1, rs2}{
-Load a byte from memory into a particular byte of an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-\VERB[RV]{b0} refers to which byte of the destination register to modify.
-If \VERB[RV]{b0} is zero, the zero-extended byte value is written to
-$\XCR[*][{\VERB[RV]{crd}}]$.
-If \VERB[RV]{b0} is non-zero, then only bytes
-\VERB[RV]{b0} 
-and
-$\VERB[RV]{b0}+1$
-of the destination register is modified.
-}{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
-  \If{$index = 0$}{
-    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN 0$ \;
-    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
-    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
-  }
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.ldr.hu}{crd(b0), rs1, rs2}{
-Load a halfword from memory into an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-If the resulting address is not halfword aligned, implementations must raise
-exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{lhu} instruction does.
-\VERB[RV]{b0} refers to the first byte of the destination register to modify.
-It must be either $0$ or $2$, denoting the lower or upper halfword respectivley.
-If \VERB[RV]{b0} is zero, the zero-extended halfword value is written to
-$\XCR[*][{\VERB[RV]{crd}}]$.
-If \VERB[RV]{b0} is non-zero, then only the \VERB[RV]{b0}'th halfword of the
-destination register is modified.
-}{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{index+1} \ASN \MEM[*][{addr+1}]$ \;
-  \If{$index = 0$}{
-    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN 0$ \;
-    $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN 0$ \;
-  }
-}
-
-% -----------------------------------------------------------------------------
-
-\XCINSTR{xc.ldr.w}{crd, rs1, rs2}{
-Load a word from memory into an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-If the resulting address is not word aligned, implementations must raise
-exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{lw} instruction does.
-}{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \MEM[*][{addr+0}]$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{1} \ASN \MEM[*][{addr+1}]$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{2} \ASN \MEM[*][{addr+2}]$ \;
-  $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{3} \ASN \MEM[*][{addr+3}]$ \;
-}
-
-% -----------------------------------------------------------------------------
-
 \XCINSTR{xc.str.b}{crd(b0), rs1, rs2}{
-Store a byte to memory from an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-\VERB[RV]{b0} refers to which byte of the source $\XCR[*][{\VERB[RV]{crd}}]$
-register to write to memory.
+  Store a specific      byte of an $\XCR$ register into memory.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
   $index \ASN \VERB[RV]{b0}$ \;
@@ -275,15 +303,12 @@ register to write to memory.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.str.h}{crd(b0), rs1, rs2}{
-Store a halfword to memory from an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-If the resulting address is not halfword aligned, implementations must raise
-exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{sh} instruction does.
-\VERB[RV]{b0} must be either $0$ or $2$, and refers to the first byte of the source
-$\XCR[*][{\VERB[RV]{crd}}]$ register to write to memory.
+  Store a specific half-word of an $\XCR$ register into memory.
+  If the effective address $addr$ is not half-word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{sh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
   $index \ASN \VERB[RV]{b0}$ \;
@@ -294,13 +319,12 @@ $\XCR[*][{\VERB[RV]{crd}}]$ register to write to memory.
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.str.w}{crd, rs1, rs2}{
-Store a word to memory from an $\XCR$ register.
-The memory address is computed by adding the values in
-$\GPR[*][{\VERB[RV]{rs1}}]$
-and
-$\GPR[*][{\VERB[RV]{rs2}}]$.
-If the resulting address is not word aligned, implementations must raise
-exceptions in the same way as the base RISC-V {\tt rv32i} \VERB[RV]{sw} instruction does.
+  Store                         an $\XCR$ register into memory.
+  If the effective address $addr$ is not      word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{sw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
   $\MEM[*][{addr+0}] \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0}$ \;
@@ -485,7 +509,7 @@ to exceptions.
 \XCINSTR{xc.ld.liu}{crd, imm16}{
   Load an immediate half-word
   into the lower (or least-significant) half-word of an $\XCR$ register, 
-  leaving the other half-word in said register un-modified.
+  leaving the other half-word in said register unmodified.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm16} = \VERB[RV]{imm11} \CONS \VERB[RV]{imm5} .
@@ -499,7 +523,7 @@ to exceptions.
 \XCINSTR{xc.ld.hiu}{crd, imm16}{
   Load an immediate half-word
   into the upper (or  most-significant) half-word of an $\XCR$ register, 
-  leaving the other half-word in said register un-modified.
+  leaving the other half-word in said register unmodified.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{imm16} = \VERB[RV]{imm11} \CONS \VERB[RV]{imm5} .
@@ -611,7 +635,7 @@ to exceptions.
     $\VERB[RV]{d}$
     of
     $\XCR[*][{\VERB[RV]{crd}}]$.
-    All other destination register bits remain un-modified.
+    All other destination register bits remain unmodified.
 }{
   $s \ASN \VERB[RV]{cs}$ \;
   $d \ASN \VERB[RV]{cl}$ \;
