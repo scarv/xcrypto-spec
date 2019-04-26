@@ -545,42 +545,32 @@ To ensure consistency, the instruction must adhere to the following rules
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.bop}{crd, crs1, crs2, lut8}{
-  Compute each $i$-bit of a $32$-bit result by applying a given $3$-input, 
-  $1$-output Boolean function $f$ to corresponding $i$-th bits of the three
-  operands.
-  
-  The function $f$ is specified as a truth-table encoded as the
-  immediate \VERB[RV]{lut8}: given
+  Compute each $1$-bit sub-word (i.e.,    bit) of an $\XCLEN$-bit result
+  via application of a function
   \[
-  \begin{array}{|ccc|c|}
-  \hline
-  \multicolumn{4}{|c|}{f}     \\
-  \hline
-  x_i & y_i & z_i & r_i               \\
-  \hline
-    0 & 0 &   0 & \VERB[RV]{lut8}_0 \\
-    0 & 0 &   1 & \VERB[RV]{lut8}_1 \\
-    0 & 1 &   0 & \VERB[RV]{lut8}_2 \\
-    0 & 1 &   1 & \VERB[RV]{lut8}_3 \\
-    1 & 0 &   0 & \VERB[RV]{lut8}_4 \\
-    1 & 0 &   1 & \VERB[RV]{lut8}_5 \\
-    1 & 1 &   0 & \VERB[RV]{lut8}_6 \\
-    1 & 1 &   1 & \VERB[RV]{lut8}_7 \\
-  \hline
-  \end{array}
+  f  : \SET{ 0, 1 }^3 \rightarrow \SET{ 0, 1 }
   \]
-  the instruction essentially computes
-  $
-  \INDEX{r}{i} = f( \INDEX{x}{i}, \INDEX{y}{i}, \INDEX{z}{i} ) = \INDEX{\VERB[RV]{lut8}}{x_i \CONS y_i \CONS z_i}
-  $
-  for $x$, $y$, $z$ and $r$, all in $\XCR$ registers.
+  encoded as a truth-table via immediate \VERB[RV]{lut8} st.
+  \[
+  f( i ) = \INDEX{\VERB[RV]{lut8}}{i}
+  \]
+  for $0 \leq i <  8$;
+  the  input to said function is read    from (the               $1$-bit sub-words of) three $\XCR$ registers,
+  and 
+  the output                  is written to   (the corresponding $1$-bit sub-word  of) an    $\XCR$ register.
+  For example, if
+  $\VERB[RV]{lut8} = \RADIX{11110000}{2}$
+  then
+  $f( \RADIX{000}{2} ) = \RADIX{0}{2}$,
+  $f( \RADIX{011}{2} ) = \RADIX{0}{2}$,
+  $f( \RADIX{100}{2} ) = \RADIX{1}{2}$,
+  and
+  $f( \RADIX{111}{2} ) = \RADIX{1}{2}$.
   Note that
   \VERB[RV]{xc.bop}
-  allows synthesis of a wider set of functionality; 
-  for example, it can be used to synthesise a set of standard Boolean
-  instructions (e.g., those in RV32I) by padding 
-  \VERB[RV]{lut8} 
-  appropriately per
+  allows synthesis of a wider set of functionality;
+  for example, it can be used to synthesise 
+  standard Boolean instructions in the base ISA
   \[
   \begin{array}{l@{\;}c@{\;}l c l@{\;}c@{\;}l}
   \VERB[RV]{lut8} &=& \RADIX{10001000}{2} &\Longrightarrow& f &=& x \AND y \\
@@ -588,46 +578,104 @@ To ensure consistency, the instruction must adhere to the following rules
   \VERB[RV]{lut8} &=& \RADIX{01100110}{2} &\Longrightarrow& f &=& x \XOR y \\
   \end{array}
   \]
+  by padding 
+  \VERB[RV]{lut8} 
+  appropriately.
 }{
+  $f = \VERB[RV]{imm8}$ \;
+  $t \ASN 0$ \;
   \For{$i = 0$ {\bf upto} $31$} {
-    $index \ASN \INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \CONS \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{i} \CONS \INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
-    $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX{\VERB[RV]{lut8}}{index}$ \;
+    $\INDEX  {t}{i} \ASN f( \INDEX{\XCR[*][{\VERB[RV]{crd}}]}{i} \CONS \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{i} \CONS \INDEX{\XCR[*][{\VERB[RV]{crs2}}]}{i} )$ \;
   }
+  $\XCR[*][{\VERB[RV]{crd}}] \ASN t$ \;
+}
+
+% ----------------------------------------------------------------------------
+
+\XCINSTR{xc.lut}{crd, crs1, crs2, crs3}{
+  Compute each $4$-bit sub-word (i.e., nibble) of an $\XCLEN$-bit result
+  via application of a function
+  \[
+  f  : \SET{ 0, 1 }^4 \rightarrow \SET{ 0, 1 }^4
+  \]
+  encoded st.
+  \[
+  f( i ) = \INDEX[4]{\XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}])}{i}
+  \]
+  for $0 \leq i < 15$;
+  the  input to said function is read    from (a                 $4$-bit sub-word of) an     $\XCR$ register,
+  and 
+  the output                  is written to   (the corresponding $4$-bit sub-word of) an     $\XCR$ register.
+  For example, if
+  $\XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}] = \RADIX{0123456789ABCDEF}{16}$
+  then
+  $f( \RADIX{0000}{2} ) = \RADIX{1111}{2}$,
+  $f( \RADIX{0001}{2} ) = \RADIX{1110}{2}$,
+  $f( \RADIX{1110}{2} ) = \RADIX{0001}{2}$,
+  and
+  $f( \RADIX{1111}{2} ) = \RADIX{0000}{2}$.
+  Note that
+  \VERB[RV]{xc.lut}
+  allows synthesis of a wider set of functionality;
+  for example, it can be used to synthesise 
+  the application of a function
+  \[
+  f' : \SET{ 0, 1 }^2 \rightarrow \SET{ 0, 1 }^2
+  \]
+  by padding
+  $\XCR[*][{\VERB[RV]{crs3}}]$
+  and
+  $\XCR[*][{\VERB[RV]{crs2}}]$
+  appropriately.
+}{
+  $f = \XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}]$ \;
+  $t \ASN 0$ \;
+  \For{$i = 0$ {\bf upto}  $3$}{
+    $\INDEX[4]{t}{i} \ASN f( \XCR[*][{\VERB[RV]{crs1}}] )$ \;
+  }
+  $\XCR[*][{\VERB[RV]{crd}}] \ASN t$ \;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ext}{crd, crs1, start, length}{
   Extract a contiguous sequence of bits 
-  from             one $\XCR$ register, and
-  write them as the LSBs in another $\XCR$ register.
-  The extracted bitfield is zero padded upto 
-  the length of the destination register.
-  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
-  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
-  For an instruction word to decode as $\VERB[RV]{xc.ins}$,
+  from               one     $\XCR$ register (at an arbitrary index), 
+  and
+   insert them
+  into (the LSBs of) another $\XCR$ register;
+  the extracted bits are zero-extended.
+  Note that, wrt. the encoding,
+  $\VERB[RV]{cs}$ contains $\VERB[RV]{start}$
+  and
+  $\VERB[RV]{cl}$ contains $\VERB[RV]{length} - 1$;
   it is required that
-  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
-  the source register length.
+  $
+  \VERB[RV]{start} + \VERB[RV]{length} \leq \XCLEN .
+  $
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
-  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{} \ASN \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{hi \RANGE lo}$ \;
+  $\INDEX{\XCR[*][{\VERB[RV]{crd}}]}{} \ASN \EXT[\RVXLEN]{0}( \INDEX{\XCR[*][{\VERB[RV]{crs1}}]}{hi \RANGE lo} )$ \;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ins}{crd, crs1, start, length}{
-  Insert a contiguous sequence of bits
-  from the LSBs of one $\XCR$ register, into
-  another $\XCR$ register at an arbitrary position.
-  All other bits in the destination register are unaffected.
-  The $\VERB[RV]{cs}$ field contains $\VERB[RV]{start}$ .
-  The $\VERB[RV]{cl}$ field contains $\VERB[RV]{length}-1$.
-  For an instruction word to decode as $\VERB[RV]{xc.ins}$,
+  Extract a contiguous sequence of bits 
+  from (the LSBs of) one     $\XCR$ register, 
+  and
+   insert them 
+  into               another $\XCR$ register (at an arbitrary index);
+  the other bits in said register are unmodified.
+  Note that, wrt. the encoding,
+  $\VERB[RV]{cs}$ contains $\VERB[RV]{start}$
+  and
+  $\VERB[RV]{cl}$ contains $\VERB[RV]{length} - 1$;
   it is required that
-  $\VERB[RV]{start} + \VERB[RV]{length}$ be less than or equal to
-  the source register length.
+  $
+  \VERB[RV]{start} + \VERB[RV]{length} \leq \XCLEN .
+  $
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
@@ -718,52 +766,6 @@ To ensure consistency, the instruction must adhere to the following rules
     $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b1}$ \;
     $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b2}$ \;
     $\INDEX[8]{\XCR[*][{\VERB[RV]{crd}}]}{0} \ASN \INDEX[8]{\XCR[*][{\VERB[RV]{crs1}}]}{b3}$ \;
-}
-
-% ----------------------------------------------------------------------------
-
-\XCINSTR{xc.lut}{crd, crs1, crs2, crs3}{
-  Apply an arbitrary $4$-bit input, $4$-bit output Look-up Table (LUT) 
-  to the contents of 
-  $\XCR[*][{\VERB[RV]{crs1}}]$,
-  placing the result in
-  $\XCR[*][{\VERB[RV]{crd}}]$.
-  The LUT is specified by
-  $
-  \XCR[*][{\VERB[RV]{crs2}}]$ and $\XCR[*][{\VERB[RV]{crs3}}] ,
-  $
-  allowing definition of
-  \[
-  lut[i] = \INDEX[4]{{(\XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}])}}{i}
-  \]
-  for each $0 \leq i < 15$.  For example, if 
-  $
-  \XCR[*][{\VERB[RV]{crs2}}] = \RADIX{ABCD1234}{16}
-  $
-  and
-  $
-  \XCR[*][{\VERB[RV]{crs3}}] = \RADIX{456789EF}{16}
-  $
-  then 
-  $lut[0] = \RADIX{4}{16}$, 
-  $lut[1] = \RADIX{3}{16}$,
-  $lut[7] = \RADIX{A}{16}$ 
-  and 
-  $lut[8] = \RADIX{F}{16}$.
-
-  Note that
-  \VERB[RV]{xc.lut}
-  allows synthesis of a wider set of functionality; 
-  for example, application of a $2$-bit input, $2$-bit output LUT can 
-  be synthesised by padding
-  $
-  \XCR[*][{\VERB[RV]{crs2}}]$ and $\XCR[*][{\VERB[RV]{crs3}}]
-  $
-  appropriately.
-}{
-  \For{$i=0$ {\bf upto} $15$}{
-    \INDEX[4]{\XCR[*][{\VERB[RV]{crd}}]}{i} = lut[\INDEX[4]{\XCR[*][{\VERB[RV]{crs1}}]}{i}]
-  }
 }
 
 % =============================================================================
