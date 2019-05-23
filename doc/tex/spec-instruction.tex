@@ -787,40 +787,46 @@ $\odot$, register or immediate variants essentially compute
 \noindent
 and for each 
 $
-0 \leq i < \VERB[RV]{n} ,
+0 \leq i < \VERB[RV]{w} ,
 $ 
-where the field count
+where the field bit width
 $
-\VERB[RV]{n} \in \SET{ 1, 2, 4, 8, 16 }
+\VERB[RV]{w} \in \SET{ 2, 4, 8, 16, 32}
 $ 
-specified in the instruction encoding implies a field width of 
-$
-w = \XCLEN / \VERB[RV]{n} .
-$
-As such, said encoding yields the following cases
-\[
-\begin{array}{ccrcc@{\;}c@{\;}rc@{\;}c@{\;}r}
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{000}{2} &\mapsto& \VERB[RV]{n} &=&  1 & w &=& 32     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{001}{2} &\mapsto& \VERB[RV]{n} &=&  2 & w &=& 16     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{010}{2} &\mapsto& \VERB[RV]{n} &=&  4 & w &=&  8     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{011}{2} &\mapsto& \VERB[RV]{n} &=&  8 & w &=&  4     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{100}{2} &\mapsto& \VERB[RV]{n} &=&  1 & w &=& 32     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{101}{2} &\mapsto& \VERB[RV]{n} &=& 16 & w &=&  2     \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{110}{2} &\mapsto& \multicolumn{6}{c}{\mbox{invalid}} \\
-\VERB[RV]{ca} \CONS \VERB[RV]{cb} \CONS \VERB[RV]{cc} &=& \RADIX{111}{2} &\mapsto& \multicolumn{6}{c}{\mbox{invalid}} \\
-\end{array}
-\]
-where cases marked invalid are reserved.  Note that the encoding 
-$
-\RADIX{100}{2}
-$
-is valid only for the instructions
-\VERB[RV]{xc.psll.i},
-\VERB[RV]{xc.psrl.i} and
-\VERB[RV]{xc.prot.i}.
-In this case, the \VERB[RV]{ca} bit is used to encode the most significant
-bit of the shift/rotate amount; for all other instructions, the encoding
-is considered invalid.
+is specified in the $\VERB[RV]{pw}$ field of the instruction encoding.
+As such, said encoding yields the following cases:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ccc@{}}
+\toprule
+Assembler Mnemonic & PW Value       & Bit Field Width \\ \midrule
+None               & \RADIX{000}{2} & Invalid         \\
+{\tt c }           & \RADIX{001}{2} & $2 $            \\
+{\tt n }           & \RADIX{010}{2} & $4 $            \\
+{\tt b }           & \RADIX{011}{2} & $8 $            \\
+{\tt h }           & \RADIX{100}{2} & $16$            \\
+{\tt w }           & \RADIX{101}{2} & $32$            \\
+None               & \RADIX{110}{2} & Invalid         \\
+None               & \RADIX{111}{2} & Invalid         \\ \bottomrule
+\end{tabular}
+\end{table}
+
+where cases marked invalid are reserved, and result in an invalid opcode
+exception when encountered in an otherwise valid instruction.
+
+As concrete examples:
+\begin{itemize}
+\item {\tt xc.padd w, c0, c1, c2}
+    will add the two full 32-bit values in the source registers together.
+\item {\tt xc.padd h, c0, c1, c2} 
+    will add corresponding halfwords.
+\item {\tt xc.psll b, c0, c1, c2} 
+    will rotate bytes in
+    $\XCR[*][{\VERB[RV]{crs1}}]$
+    by the value in
+    $\XCR[*][{\VERB[RV]{crs2}}]$
+\end{itemize}
 
 % -----------------------------------------------------------------------------
 
@@ -828,7 +834,8 @@ is considered invalid.
   Compute a   register-based packed addition, 
   implying $\odot = +$.
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{+}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
   }
@@ -840,7 +847,8 @@ is considered invalid.
   Compute a   register-based packed subtraction, 
   implying $\odot = -$.
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{-}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
   }
@@ -855,7 +863,8 @@ is considered invalid.
   each computed product
   (cf. \VERB[RV]{xc.pmul.h},   which captures the ``high'' half, or $w$ MSBs).
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
@@ -871,7 +880,8 @@ is considered invalid.
   each computed product
   (cf. \VERB[RV]{xc.pmul.l},   which captures the  ``low'' half, or $w$ LSBs).
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
@@ -887,7 +897,8 @@ is considered invalid.
   each computed product
   (cf. \VERB[RV]{xc.pclmul.h}, which captures the ``high'' half, or $w$ MSBs).
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
@@ -903,7 +914,8 @@ is considered invalid.
   each computed product
   (cf. \VERB[RV]{xc.pclmul.l}, which captures the  ``low'' half, or $w$ LSBs).
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
@@ -925,7 +937,8 @@ is considered invalid.
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 .
   $
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
   }
@@ -936,20 +949,6 @@ is considered invalid.
 \XCINSTR{xc.psll.i}{pw, crd, crs1, cshamt}{
   Compute an immediate-based packed left-shift,
   implying $\odot = \LSH$.
-  Note that, wrt. the encoding,
-  the distance is given by
-  \[
-  \VERB[RV]{shamt} = \left\{\begin{array}{rl}
-                            \VERB[RV]{ca} \CONS \VERB[RV]{cshamt} & \mbox{~~if $w =    32$} \\
-                            0             \CONS \VERB[RV]{cshamt} & \mbox{~~if $w \neq 32$} \\
-                            \end{array}
-                     \right.
-  \]
-  i.e., 
-  $
-  \VERB[RV]{ca}
-  $
-  is used to encode the MSB iff. $w = 32$.
   Keep in mind that
   any out-of-range distance
   $
@@ -959,16 +958,11 @@ is considered invalid.
   $
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 
   $
-  either way.
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
-  \eIf{$w = 32$}{
-    $\VERB[RV]{shamt} = \VERB[RV]{ca} \CONS \VERB[RV]{cshamt}$\;
-  }{
-    $\VERB[RV]{shamt} = 0             \CONS \VERB[RV]{cshamt}$\;
-  }
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}   \VERB[RV]{shamt}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}   \VERB[RV]{cshamt}$ \;
   }
 }
 
@@ -987,7 +981,8 @@ is considered invalid.
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 .
   $
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
   }
@@ -998,20 +993,6 @@ is considered invalid.
 \XCINSTR{xc.psrl.i}{pw, crd, crs1, cshamt}{
   Compute an immediate-based packed left-shift,
   implying $\odot = \RSH$.
-  Note that, wrt. the encoding,
-  the distance is given by
-  \[
-  \VERB[RV]{shamt} = \left\{\begin{array}{rl}
-                            \VERB[RV]{ca} \CONS \VERB[RV]{cshamt} & \mbox{~~if $w =    32$} \\
-                            0             \CONS \VERB[RV]{cshamt} & \mbox{~~if $w \neq 32$} \\
-                            \end{array}
-                     \right.
-  \]
-  i.e., 
-  $
-  \VERB[RV]{ca}
-  $
-  is used to encode the MSB iff. $w = 32$.
   Keep in mind that
   any out-of-range distance
   $
@@ -1021,16 +1002,11 @@ is considered invalid.
   $
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 
   $
-  either way.
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
-  \eIf{$w = 32$}{
-    $\VERB[RV]{shamt} = \VERB[RV]{ca} \CONS \VERB[RV]{cshamt}$\;
-  }{
-    $\VERB[RV]{shamt} = 0             \CONS \VERB[RV]{cshamt}$\;
-  }
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}   \VERB[RV]{shamt}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}   \VERB[RV]{cshamt}$ \;
   }
 }
 
@@ -1045,7 +1021,8 @@ is considered invalid.
   \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \pmod{w} .
   $
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
   }
@@ -1056,33 +1033,15 @@ is considered invalid.
 \XCINSTR{xc.prot.i}{pw, crd, crs1, cshamt}{
   Compute an immediate-based packed right-rotate,
   implying $\odot = \RRT$.
-  Note that, wrt. the encoding,
-  the distance is given by
-  \[
-  \VERB[RV]{rtamt} = \left\{\begin{array}{rl}
-                            \VERB[RV]{ca} \CONS \VERB[RV]{cshamt} & \mbox{~~if $w =    32$} \\
-                            0             \CONS \VERB[RV]{cshamt} & \mbox{~~if $w \neq 32$} \\
-                            \end{array}
-                     \right.
-  \]
-  i.e., 
-  $
-  \VERB[RV]{ca}
-  $
-  is used to encode the MSB iff. $w = 32$.
   Keep in mind that
   the effective distance will be
   $
   \VERB[RV]{rtamt} \pmod{w} 
   $
-  either way.
 }{
-  $w = 32 / \VERB[RV]{n}$ \;
-  \eIf{$w = 32$}{
-    $\VERB[RV]{rtamt} = \VERB[RV]{ca} \CONS \VERB[RV]{cshamt}$\;
-  }{
-    $\VERB[RV]{rtamt} = 0             \CONS \VERB[RV]{cshamt}$\;
-  }
+  $w = 2^{\VERB[RV]{pw}}$ \;
+  $n = \XCLEN / w$\;
+  $\VERB[RV]{rtamt} = \VERB[RV]{cshamt}$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}   \VERB[RV]{rtamt}$ \;
   }
