@@ -837,7 +837,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{+}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{+}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
   }
 }
 
@@ -850,7 +850,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{-}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{-}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
   }
 }
 
@@ -866,7 +866,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
   }
 }
@@ -883,7 +883,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
   }
 }
@@ -900,7 +900,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
   }
 }
@@ -917,7 +917,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
   }
 }
@@ -940,7 +940,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
   }
 }
 
@@ -984,7 +984,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
   }
 }
 
@@ -1024,7 +1024,7 @@ As concrete examples:
   $w = 2^{\VERB[RV]{pw}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
-    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}   \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i}$ \;
+    $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
   }
 }
 
