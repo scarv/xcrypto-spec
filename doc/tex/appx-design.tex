@@ -1,11 +1,9 @@
 % =============================================================================
 
-\subsection{More specific,  low(er)-level points}
-\label{appx:discuss:lo}
+\begin{description}
 
-\begin{itemize}
-
-\item \XCID instruction mnemonics follow a (somewhat) consistent scheme; 
+\item[Is there any logic behind the \XCID instruction mnemonics?]
+      \XCID instruction mnemonics follow a (somewhat) consistent scheme; 
       they all include a domain-separating prefix \VERB[RV]{xc}, and, if
       need be, a suffix intended to identify specific variants.  These 
       include
@@ -21,7 +19,9 @@
       \VERB[RV]{x} &:& \mbox{a size, length, or count parameter} \\
       \end{array}
       \]
-\item Although they share a memory interface, there is no requirement for
+
+\item[What restrictions exist wrt. the \XCID memory interface?]
+      Although they share a memory interface, there is no requirement for
       the host core and co-processor to share an address space.  Indeed,
       it is easy to imagine cases where using disjoint address spaces is
       useful; examples include use of
@@ -30,16 +30,8 @@
       b) a (uncached) scratch-pad memory,
       by the co-processor alone.
 
-\end{itemize}
-
-% =============================================================================
-
-\subsection{More  generic, high(er)-level points}
-\label{appx:discuss:hi}
-
-\begin{itemize}
-
-\item Lee and Fiskiran introduce (e.g., see~\cite{SCARV:LeeFis:05}) the PLX
+\item[Why not generalise the \XCID word size, e.g., in line with the base ISA?]
+      Lee and Fiskiran introduce (e.g., see~\cite{SCARV:LeeFis:05}) the PLX
       design, which, among other concepts, supports 
       a) sub-word parallelism (cf. packed, or SWAR-like operations),
          and
@@ -102,7 +94,8 @@
 
       \end{itemize}
 
-\item Consider a general case, wherein a given ISA has instruction formats
+\item[Why does \XCID deviate from a $3$-address instruction format?]
+      Consider a general case, wherein a given ISA has instruction formats
       that allow access to $n$ general-purpose registers, st. 
       $
       n = s + d
@@ -187,7 +180,8 @@
       \item use some form of instruction prefix.
       \end{enumerate}
 
-\item The $\XCR$ register file capacity (i.e., the number of constituent
+\item[Why does the \XCID register file have $16$ vs. X entries?]
+      The $\XCR$ register file capacity (i.e., the number of constituent
       registers) is a trade-off between quite a number of factors, e.g.,
 
       \begin{itemize}
@@ -204,6 +198,24 @@
       \item a smaller capacity reducing instruction encoding pressure.
       \end{itemize}
 
-\end{itemize}
+\item[Why include instruction class $2.1$, when alternative X would be better?]
+      Although still further options may be possible, it seems obvious
+      that one {\em could} expose the RNG via
+
+      \begin{itemize}
+      \item a set of instructions,
+      \item one or more CSRs,
+            or
+      \item a memory-mapped peripheral.
+      \end{itemize}
+
+      \noindent
+      Trade-offs wrt. various metrics naturally result.  For example,
+      the first option demands space in the instruction encoding, 
+      whereas
+      the last  option can be accessed using existing memory access instructions but with an impact on latency;
+      at best, it seems unclear there is a single ``best'' option.
+
+\end{description}
 
 % =============================================================================

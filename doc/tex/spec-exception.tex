@@ -8,8 +8,10 @@ semantics in \REFSEC{sec:spec:instruction}, with general cases captured in
 the following:
 
 \begin{itemize}
-\item Any attempt to execute an
-      invalid \XCID instruction
+\item Any attempt to execute an \XCID instruction which
+      a) has an invalid opcode
+         or
+      b) has a    valid opcode but at least one invalid operand,
       will raise an 
       illegal instruction exception.
 \item Any attempt to execute a
@@ -23,6 +25,13 @@ the following:
       from an unsupported feature class (or parameterisation thereof, cf. packed operations, per fields in $\SPR{mxcsr}$)
       will raise an 
       illegal instruction exception.
+\item Any instruction that accesses $\GPR$ using a register address $i$ 
+      will raise an
+      illegal instruction exception
+      if $i \geq |\GPR|$; for example
+      RV32I sets $|\GPR| = 32$ so demands $0 \leq i < 32$,
+      whereas
+      RV32E sets $|\GPR| = 16$ so demands $0 \leq i < 16$.
 \item Any access to
       $\SPR{mxcsr}$
       from a privilege mode other than machine mode

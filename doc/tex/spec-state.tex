@@ -44,6 +44,7 @@ Note that
 \begin{itemize}
 \item Upon reset of \XCID,
             the $\XCR$ register file {\em must} be reset (cf.~\REFSEC{sec:spec:instruction:xc.init}).
+      st. $\XCR[*][i] = 0$ for $0 \leq i < |\XCR|$.
 \item RISC-V specifies~\cite[Section 2.1]{SCARV:RV:ISA:I:17} that
       $
       \GPR[*][0] = 0 ,
