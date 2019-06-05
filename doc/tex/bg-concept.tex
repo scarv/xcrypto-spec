@@ -18,6 +18,7 @@
       latter techniques; one could view said remit as focused on maximising
       the viability of software-based cryptographic implementations.
 
+% TODO: Link to appendix FAQ on general v.s. special purpose ISE meaning.
 \item \XCID is best described as a general-purpose cryptographic ISE, and so
       specified along those lines.  However, the implementation of \XCID is
       left more open-ended: one could consider approaches including
@@ -88,10 +89,14 @@
             a) deviation from the existing instruction encoding formats,
                and 
             b) introduction of additional state.
+            % TODO: "Where we have deviated from RISC-V norms, we have
+            %        justified these decisions in Appendix X"
       \item {\bf       Generality}.
-            Bar some controlled instances, \XCID endeavours to avoid inclusion
+            Bar some controlled instances, \XCID endeavours to avoid including
             any (overly) functionality-specific features (and, therefore, any
-            associated hardware).  
+            associated hardware).
+            % TODO: again, "where we have included niche or specific
+            %       functionality, we justify it accordingly..."
       \item {\bf      Flexibility}. 
             Modulo the status of security as a first-class design metric, a
             goal of \XCID remains to avoid, or at least minimise any ``baked 

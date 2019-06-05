@@ -104,11 +104,11 @@ $\SPR{uxcsr}$ & \RADIX{CC0}{16} & read       \\
 & \bitbox{ 1}{\rule{\width}{\height}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{SHA3}     $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{AES }     $}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{16}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 8}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 4}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 2}$}}
-& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 1}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 4}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{ 8}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{16}$}}
+& \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{PACK}_{32}$}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{MP  }     $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{BIT }     $}}
 & \bitbox{ 1}{\rotatebox{90}{\tiny $\ID{MEM }     $}}
@@ -120,7 +120,9 @@ $\SPR{uxcsr}$ & \RADIX{CC0}{16} & read       \\
 \\
 \end{bytefield}
 \end{center}
-\caption{A diagrammatic description of the $\SPR{mxcsr}$ register; blanked regions are reserved, so yield zero when the register is read.}
+\caption{A diagrammatic description of the $\SPR{mxcsr}$ register; blanked regions are reserved, so yield zero when the register is read.
+Note that we force implementations to yield zero, rather than requiring software to simply ignore these bits
+(as happens in the base RISC-V specification) to remove any possibility of implementation specific behaviour.}
 \label{fig:mxcsr}
 \end{figure}
 
@@ -137,11 +139,11 @@ $\ID{RNG }      $ & $           5$ & R/O    & Is RNG  feature class, per \REFSEC
 $\ID{MEM }      $ & $           6$ & R/O    & Is MEM  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
 $\ID{BIT }      $ & $           7$ & R/O    & Is BIT  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
 $\ID{MP  }      $ & $           8$ & R/O    & Is MP   feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
-$\ID{PACK}_{ 1} $ & $           9$ & R/O    & Are operations on sub-word  of $w = 32$ bits supported (set), or not (clear)        \\
-$\ID{PACK}_{ 2} $ & $          10$ & R/O    & Are operations on sub-words of $w = 16$ bits supported (set), or not (clear)        \\
-$\ID{PACK}_{ 4} $ & $          11$ & R/O    & Are operations on sub-words of $w =  8$ bits supported (set), or not (clear)        \\
-$\ID{PACK}_{ 8} $ & $          12$ & R/O    & Are operations on sub-words of $w =  4$ bits supported (set), or not (clear)        \\
-$\ID{PACK}_{16} $ & $          13$ & R/O    & Are operations on sub-words of $w =  2$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{32} $ & $           9$ & R/O    & Are operations on sub-word  of $w = 32$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{16} $ & $          10$ & R/O    & Are operations on sub-words of $w = 16$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 8} $ & $          11$ & R/O    & Are operations on sub-words of $w =  8$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 4} $ & $          12$ & R/O    & Are operations on sub-words of $w =  4$ bits supported (set), or not (clear)        \\
+$\ID{PACK}_{ 2} $ & $          13$ & R/O    & Are operations on sub-words of $w =  2$ bits supported (set), or not (clear)        \\
 $\ID{AES }      $ & $          14$ & R/O    & Is AES  feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\
 $\ID{SHA3}      $ & $          15$ & R/O    & Is SHA3 feature class, per \REFSEC{sec:bg:feature}, supported (set), or not (clear) \\ 
 \hline
@@ -282,14 +284,6 @@ definition and semantics are identically, bar the following caveats:
       All other registers, 
       i.e., $\XCR[*][8]$ upward,
       are considered to be temporaries.
-\item Any $\XCR$ registers pushed to the stack should be stored in ascending 
-      order.  That is, since the stack grows downwards, 
-      $\XCR[*][i]$
-      should be written to a lower address than
-      $\XCR[*][j]$
-      if $i < j$; if $i = 0$ and $j = 1$, then storing $\XCR[*][i]$ at the
-      address $x$ implies storing $\XCR[*][j]$ at the address $x - 4$ for
-      example.
 \item Any $\XCR$ registers pushed to the stack should be stored 
       at the end of the stack frame, 
       i.e., {\em after} content associated with base ISA (plus any standard 

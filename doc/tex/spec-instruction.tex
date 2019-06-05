@@ -379,7 +379,7 @@
 
 The semantics of each instruction in this class could be broadly described 
 as involving multiple, potentially non-contiguous memory accesses, i.e., a 
-sequence of loads and/or stores; each such access relates to an effective
+sequence of loads or stores; each such access relates to an effective
 address, computed as the sum of 
 a) an explicit             base address 
    plus
@@ -420,6 +420,9 @@ To ensure consistency, the instruction must adhere to the following rules
       For example, the partial execution of a load instruction would not
       lead to the destination register being updated; it could, however,
       lead to the state of any cache memory being updated.
+      It is imperative that {\em if} micro-architectural state {\em is}
+      updated by a faulting instructions, that mitigations against
+      attacks which exploit this are taken.
 
 \end{itemize}
 
@@ -576,6 +579,7 @@ To ensure consistency, the instruction must adhere to the following rules
   \VERB[RV]{lut8} &=& \RADIX{10001000}{2} &\Longrightarrow& f &=& x \AND y \\
   \VERB[RV]{lut8} &=& \RADIX{11101110}{2} &\Longrightarrow& f &=& x \IOR y \\
   \VERB[RV]{lut8} &=& \RADIX{01100110}{2} &\Longrightarrow& f &=& x \XOR y \\
+  \VERB[RV]{lut8} &=& \RADIX{11101000}{2} &\Longrightarrow& f &=& (x \AND y) \IOR ((x \IOR y) \AND z)
   \end{array}
   \]
   by padding 
@@ -600,7 +604,7 @@ To ensure consistency, the instruction must adhere to the following rules
   \]
   encoded st.
   \[
-  f( i ) = \INDEX[4]{\XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}])}{i}
+  f( i ) = \INDEX[4]{(\XCR[*][{\VERB[RV]{crs3}}] \CONS \XCR[*][{\VERB[RV]{crs2}}])}{i}
   \]
   for $0 \leq i < 15$;
   the  input to said function is read    from (a                 $4$-bit sub-word of) an     $\XCR$ register,
@@ -652,7 +656,8 @@ To ensure consistency, the instruction must adhere to the following rules
   it is required that
   $
   \VERB[RV]{start} + \VERB[RV]{length} \leq \XCLEN .
-  $
+  $.
+  Otherwise, an invalid opcode exception must be raised.
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
@@ -676,6 +681,7 @@ To ensure consistency, the instruction must adhere to the following rules
   $
   \VERB[RV]{start} + \VERB[RV]{length} \leq \XCLEN .
   $
+  Otherwise, an invalid opcode exception must be raised.
 }{
   $lo \ASN \VERB[RV]{cs}                $ \;
   $hi \ASN \VERB[RV]{cs} + \VERB[RV]{cl}$ \;
@@ -822,10 +828,14 @@ As concrete examples:
 \item {\tt xc.padd h, c0, c1, c2} 
     will add corresponding halfwords.
 \item {\tt xc.psll b, c0, c1, c2} 
-    will rotate bytes in
+    will shift all bytes in
     $\XCR[*][{\VERB[RV]{crs1}}]$
-    by the value in
+    by the word value in
     $\XCR[*][{\VERB[RV]{crs2}}]$
+\item {\tt xc.prot.i n, c0, c1, 3} 
+    will rotate right all nibbles in
+    $\XCR[*][{\VERB[RV]{crs1}}]$
+    by the immediate value.
 \end{itemize}
 
 % -----------------------------------------------------------------------------
@@ -1053,7 +1063,7 @@ As concrete examples:
 \label{sec:spec:instruction:2:5}
 
 Instructions in this class use upto
-$4$ source      $\XCR$ registers
+$3$ source      $\XCR$ registers
 and
 $2$ destination $\XCR$ registers,
 which demands some compromises wrt. the encoding used.
@@ -1125,7 +1135,7 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   $\XCR[*][{\VERB[RV]{crs1}}]$
   and
   $\XCR[*][{\VERB[RV]{crs2}}]$ as the addends,
-  $\XCR[*][{\VERB[RV]{crs3}}]$ as the carry-in,
+  $\XCR[*][{\VERB[RV]{crs3}}]$ as the carry-in bit,
   $\XCR[*][{\VERB[RV]{crd1}}]$ as the sum,
   and
   $\XCR[*][{\VERB[RV]{crd2}}]$ as the carry-out,
@@ -1169,7 +1179,7 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   one can interpret
   $\XCR[*][{\VERB[RV]{crs1}}]$ as the    minuend,
   $\XCR[*][{\VERB[RV]{crs2}}]$ as the subtrahend,
-  $\XCR[*][{\VERB[RV]{crs3}}]$ as the borrow-in,
+  $\XCR[*][{\VERB[RV]{crs3}}]$ as the borrow-in bit,
   $\XCR[*][{\VERB[RV]{crd1}}]$ as the difference,
   and
   $\XCR[*][{\VERB[RV]{crd2}}]$ as the borrow-out,

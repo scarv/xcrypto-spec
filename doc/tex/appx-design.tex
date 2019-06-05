@@ -1,5 +1,41 @@
 % =============================================================================
 
+%
+% TODO: FAQ
+%
+% - Why have a separate register file?
+%
+% - Why a 16*32-bit register file?
+%
+% - Why a "general purpose" ISA? What does this mean wrt. "special purpose"?
+%
+% - Why have we deviated from standard RISC-V instruction encoding norms?
+%
+% - What justifies the inclusion of the SHA3 specific instructions?
+%
+%   1) SHA3 is recognised as being a particularly heavy-weight algorithm.
+%      The round function relies heavily on computing integers
+%      modulo 5 in it's inner loops (when not loop-unrolled). Modulo is
+%      a slow operation at the best of times, and while it can be replaced
+%      with a lookup table in the case of Keccak, this brings extra energy
+%      intensive data accesses, made slower by RISC-V's lack of native
+%      indexed load instructions.
+%   2) While some effort has gone into accelerating Keccak on RISC platforms,
+%      these approaches have all relied to some degree on loop unrolling.
+%      This is not appropriate in memory constrained environments like
+%      embedded cores.
+%   3) Code-dense implementatons of Keccak which are runtime competative
+%      with unrolled versions can bring considerable energy-efficiency
+%      benefits in systems with instruction caches.
+%   4) Keccak (particularly the CSHAKE instantiation) is used by many of the
+%      candidate algorithms submitted to the NIST post-quantum public-key
+%      cryptography competition. This further increases its importance as
+%      an optimisation target.
+%   5) The overhead in terms of resources (LUTs or logic cells) is very
+%      small compared to the benefits the instructions provide.
+%
+
+
 \begin{description}
 
 \item[Is there any logic behind the \XCID instruction mnemonics?]
