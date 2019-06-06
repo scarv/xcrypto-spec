@@ -1,38 +1,10 @@
 % =============================================================================
 
 %
-% TODO: FAQ
-%
-% - Why have a separate register file?
-%
-% - Why a 16*32-bit register file?
+% TODO: FAQ items
 %
 % - Why a "general purpose" ISA? What does this mean wrt. "special purpose"?
 %
-% - Why have we deviated from standard RISC-V instruction encoding norms?
-%
-% - What justifies the inclusion of the SHA3 specific instructions?
-%
-%   1) SHA3 is recognised as being a particularly heavy-weight algorithm.
-%      The round function relies heavily on computing integers
-%      modulo 5 in it's inner loops (when not loop-unrolled). Modulo is
-%      a slow operation at the best of times, and while it can be replaced
-%      with a lookup table in the case of Keccak, this brings extra energy
-%      intensive data accesses, made slower by RISC-V's lack of native
-%      indexed load instructions.
-%   2) While some effort has gone into accelerating Keccak on RISC platforms,
-%      these approaches have all relied to some degree on loop unrolling.
-%      This is not appropriate in memory constrained environments like
-%      embedded cores.
-%   3) Code-dense implementatons of Keccak which are runtime competative
-%      with unrolled versions can bring considerable energy-efficiency
-%      benefits in systems with instruction caches.
-%   4) Keccak (particularly the CSHAKE instantiation) is used by many of the
-%      candidate algorithms submitted to the NIST post-quantum public-key
-%      cryptography competition. This further increases its importance as
-%      an optimisation target.
-%   5) The overhead in terms of resources (LUTs or logic cells) is very
-%      small compared to the benefits the instructions provide.
 %
 
 
@@ -130,6 +102,23 @@
 
       \end{itemize}
 
+\item[Why does \XCID deviate from the standard RISC-V encoding formats?]
+      A simple instruction encoding scheme is desirable for many reasons:
+      It can reduce design complexity, reduce decoder gate counts and
+      aids encoding assignment.
+
+      If a scheme is adopted too early however, or adhered to without
+      exception, it can become restrictive and hamper development of
+      instructions which do not naturally fit within it.
+
+      \XCID places more importance on inclusion of appropriate functionality
+      than how that functionality is encoded. Indeed, some of the most
+      important instructions in \XCID cannot possibly fit into the standard
+      RISC-V encoding scheme. 
+      Also, while uniformity of encodings has a positive impact on decoder
+      size, in absolute terms the instruction decode logic is small when
+      compared to the rest of a core.
+
 \item[Why does \XCID deviate from a $3$-address instruction format?]
       Consider a general case, wherein a given ISA has instruction formats
       that allow access to $n$ general-purpose registers, st. 
@@ -216,6 +205,39 @@
       \item use some form of instruction prefix.
       \end{enumerate}
 
+\item[Why have a separate register file for \XCID?]
+      Versus the alternative case (where \XCID instructions operate on
+      the general purpose register file), there are arguments
+      for and against a separate register file:
+    
+      \begin{itemize}
+      \item Any extra state, particularly a register file, is expensive in terms of
+            sillicon area / resource usage.
+      \item Any extra shared state incurs runtime penalties for context switching
+            and resource management.
+      \item There is a clear separation of concerns between the base RISC-V ISA
+            and \XCID. The two sets of instructions need not operate on the same
+            state.
+            From a security perspective it is even desirable that they do not.
+            Similar arguments are made for the floating-point register file in
+            the RISC-V F extension.
+      \item Separate register files allow more flexibility in how
+            \XCID is integrated into a new or existing design. Generally, it
+            allows less invasive extension of existing cores, or more
+            loosely coupled, re-usable extensions of new cores.
+      \item Many \XCID instructions rely on multiple source and destination
+            registers. Retrofitting additional read/write ports onto
+            existing designs is undesirable. Separation allows each register file
+            to be optimised in isolation.
+      \item \XCID is designed to enable side-channel resistant designs.
+            Dedicated architectural state for secret data allows
+            (potentially expensive) hardware countermeasures to be applied only
+            to relevant state, rather than the entire pipeline/core.
+            Indeed, it raises the possibility of implementing \XCID as an
+            entirely separate, {\em secure} processing pipeline.
+      \end{itemize}
+
+
 \item[Why does the \XCID register file have $16$ vs. X entries?]
       The $\XCR$ register file capacity (i.e., the number of constituent
       registers) is a trade-off between quite a number of factors, e.g.,
@@ -251,6 +273,36 @@
       whereas
       the last  option can be accessed using existing memory access instructions but with an impact on latency;
       at best, it seems unclear there is a single ``best'' option.
+
+\item[Why include the special purpose class $3.2$ SHA3 instructions?]
+      While \XCID tries to include only {\em general purpose} instructions and
+      avoid overly specific instructions, in some cases it deviates from this:
+
+      \begin{itemize}
+      \item SHA3, and the underlying Keccak round function,
+      \item While the compute elements of Keccak are well supported by other
+            \XCID instructions (and other proposals in the literature), there
+            is considerable latent complexity in generating indices into
+            the state matrix.
+            This complexity is removed by unrolling the loops and
+            turning addresses into constant offsets. However, this is not
+            always appropriate in memory constrained environments like embedded
+            cores.
+      \item The index computation relies on integer arithmetic modulo 5. This
+            is very slow to implement using the normal RISC-V {\tt mod} instruction.
+            Lookup tables can improve performance at significant energy efficiency cost.
+      \item The cost of index computation remains the same across all SHA3 parameter
+            sets, meaning that for smaller parameters, it can dominate the runtime.
+      \item Code-dense implementations of Keccak which are runtime competitive
+            with unrolled versions can bring considerable energy-efficiency
+            benefits in systems with instruction caches.
+      \item Keccak (particularly the CSHAKE instantiation) is used by many of the
+            candidate algorithms submitted to the NIST post-quantum public-key
+            cryptography competition. This further increases its importance as
+            an optimisation target.
+      \item The overhead in terms of resources (LUTs or logic cells) is very
+            small compared to the benefits the instructions provide.
+      \end{itemize}
 
 \end{description}
 
