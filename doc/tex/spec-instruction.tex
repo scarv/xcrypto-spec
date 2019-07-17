@@ -174,12 +174,12 @@
 \subsubsection{Class-$2.1$: randomness}
 \label{sec:spec:instruction:2:1}
 
-\XCINSTR{xc.rngtest}{rd1}{
+\XCINSTR{xc.rngtest}{rd}{
   Inspect the RNG state, applying a suitable ``health check'' on the level 
   of entropy available: the status flag is stored in a $\GPR$ register.
-  If, after execution \VERB[RV]{xc.rngseed},
-         $\GPR[*][{\VERB[RV]{rd1}}] \neq 0$
-  (resp. $\GPR[*][{\VERB[RV]{rd1}}] =    0$),
+  If, after execution of \VERB[RV]{xc.rngtest},
+         $\GPR[*][{\VERB[RV]{rd1}}] = 1$
+  (resp. $\GPR[*][{\VERB[RV]{rd1}}] = 0$),
   then the RNG has 
            sufficient 
   (resp. insufficient)
@@ -188,14 +188,19 @@
          can
   (resp. cannot, or at least should not)
   be used.
+  Note that the instruction must write either $1$ or $0$ to the
+  destination register.
+  Writing {\em non-zero} (resp. $1$) makes verification and co-simulation
+  much harder.
 }{
-  $\GPR[*][{\VERB[RV]{rd1}}] \TEST{\ASN} \RNG$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \TEST{\ASN} \RNG$ \;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.rngseed}{rs1}{
-  Inject (or seed) $32$-bits of entropy into the RNG, reading from an $\GPR$ register.
+  Inject (or seed) $\XLEN$-bits of entropy into the RNG, reading from a
+  $\GPR$ register.
 }{
   $\RNG \ASN \GPR[*][{\VERB[RV]{rs1}}]$ \;
 }
@@ -203,7 +208,8 @@
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.rngsamp}{rd}{
-  Sample           $32$-bits of entropy from the RNG, writing to   an $\GPR$ register.
+  Sample           $\XLEN$-bits of entropy from the RNG, writing to   a
+  $\GPR$ register.
 }{
   $\GPR[*][{\VERB[RV]{rd}}] \ASN \RNG$ \;
 }
