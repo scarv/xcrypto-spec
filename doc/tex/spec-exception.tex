@@ -9,16 +9,8 @@ the following:
 
 \begin{itemize}
 \item Any attempt to execute an \XCID instruction which
-      a) has an invalid opcode
-         or
-      b) has a    valid opcode but at least one invalid operand,
+      has a    valid opcode but at least one invalid operand,
       will raise an 
-      illegal instruction exception.
-\item Any attempt to execute a
-        valid \XCID instruction
-      from a privilege mode which does not have access to the ISE
-      (per fields in $\SPR{mxcsr}$)
-      will raise an
       illegal instruction exception.
 \item Any attempt to execute a
         valid \XCID instruction
