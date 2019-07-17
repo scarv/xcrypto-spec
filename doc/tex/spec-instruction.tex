@@ -7,116 +7,166 @@
 \label{sec:spec:instruction:1}
 
 
-\XCINSTR{xc.ldr.bu}{rd(b0), rs1, rs2}{
+\XCINSTR{xc.ldr.bu}{rd, rs1, rs2}{
   Load a      byte from memory
-  into a specific      byte of an $\GPR$ register;
-  Beyond this, note that
-  1) if
-     $\VERB[RV]{b0} =    0$,
-     all other      bytes in the $\GPR$ register are set to zero,
-     whereas
-  2) if 
-     $\VERB[RV]{b0} \neq 0$,
-     no  other      bytes in the $\GPR$ register are modified.
+  into a  $\GPR$ register,
+  zero extending to \XLEN bits.
+  Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
-  \If{$index = 0$}{
-    $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{1} \ASN 0$ \;
-    $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{2} \ASN 0$ \;
-    $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{3} \ASN 0$ \;
-  }
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(\MEM[*][{addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.hu}{rd(b0), rs1, rs2}{
-  Load a half-word from memory
-  into a specific half-word of an $\GPR$ register;
-  Beyond this, note that
-  1) if
-     $\VERB[RV]{b0} =    0$,
-     all other half-words in the $\GPR$ register are set to zero,
-     whereas
-  2) if 
-     $\VERB[RV]{b0} \neq 0$,
-     no  other half-words in the $\GPR$ register are modified.
+\XCINSTR{xc.ldr.b}{rd, rs1, rs2}{
+  Load a      byte from memory
+  into a  $\GPR$ register,
+  sign extending to \XLEN bits.
+  Instruction exists on RV32, RV64 and RV128.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr}])}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.hu}{rd, rs1, rs2}{
+  Load a  halfword from memory
+  into a  $\GPR$ register,
+  zero extending to \XLEN bits.
   If the effective address $addr$ is not half-word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
+  Instruction exists on RV32, RV64 and RV128.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(\MEM[*][{addr+1:addr}])}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.h}{rd, rs1, rs2}{
+  Load a  halfword from memory
+  into a  $\GPR$ register,
+  sign extending to \XLEN bits.
+  If the effective address $addr$ is not half-word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{lh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
+  would.
+  Instruction exists on RV32, RV64 and RV128.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+1:addr}])}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.ldr.wu}{rd, rs1, rs2}{
+  Load a      word from memory 
+  into                         an $\GPR$ register,
+  zero extending to \XLEN bits.
+  If the effective address $addr$ is not      word aligned, 
   the memory access {\em must} raise an exception in the same way
   as the base ISA 
   (e.g., per \VERB[RV]{lw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
   would.
+  Instruction exists on RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index  } \ASN \MEM[*][{addr  }]$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index+1} \ASN \MEM[*][{addr+1}]$ \;
-  \If{$index = 0$}{
-    $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{2} \ASN 0$ \;
-    $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{3} \ASN 0$ \;
-  }
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(\MEM[*][{addr+3:addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.ldr.w}{rd, rs1, rs2}{
   Load a      word from memory 
-  into                         an $\GPR$ register.
+  into                         an $\GPR$ register,
+  sign extending to \XLEN bits.
   If the effective address $addr$ is not      word aligned, 
   the memory access {\em must} raise an exception in the same way
   as the base ISA 
   (e.g., per \VERB[RV]{lw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
   would.
+  Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{0} \ASN \MEM[*][{addr+0}]$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{1} \ASN \MEM[*][{addr+1}]$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{2} \ASN \MEM[*][{addr+2}]$ \;
-  $\INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{3} \ASN \MEM[*][{addr+3}]$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+3:addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.b}{rd(b0), rs1, rs2}{
-  Store a specific      byte of an $\GPR$ register into memory.
+\XCINSTR{xc.ldr.d}{rd, rs1, rs2}{
+  Load a double word from memory 
+  into                         an $\GPR$ register,
+  sign extending to \XLEN bits.
+  If the effective address $addr$ is not double word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{ld}~\cite[Section 5.3]{SCARV:RV:ISA:I:17})
+  would.
+  Instruction exists on RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\MEM[*][{addr  }] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index}$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+7:addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.h}{rd(b0), rs1, rs2}{
-  Store a specific half-word of an $\GPR$ register into memory.
+\XCINSTR{xc.str.b}{rd, rs1, rs2}{
+  Store the least significant byte of an $\GPR$ register into memory.
+  Instruction exists on RV32, RV64 and RV128.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\MEM[*][{addr  }] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.str.h}{rd, rs1, rs2}{
+  Store the least significant half-word of an $\GPR$ register into memory.
   If the effective address $addr$ is not half-word aligned, 
   the memory access {\em must} raise an exception in the same way
   as the base ISA 
   (e.g., per \VERB[RV]{sh}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
   would.
+  Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $index \ASN \VERB[RV]{b0}$ \;
-  $\MEM[*][{addr+0}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index+0}$ \;
-  $\MEM[*][{addr+1}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{index+1}$ \;
+  $\MEM[*][{addr+1:addr}] \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.str.w}{rd, rs1, rs2}{
-  Store                         an $\GPR$ register into memory.
+  Store the least significant word of an $\GPR$ register into memory.
   If the effective address $addr$ is not      word aligned, 
   the memory access {\em must} raise an exception in the same way
   as the base ISA 
   (e.g., per \VERB[RV]{sw}~\cite[Section 2.6]{SCARV:RV:ISA:I:17})
   would.
+  Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addr+0}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
-  $\MEM[*][{addr+1}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{1}$ \;
-  $\MEM[*][{addr+2}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{2}$ \;
-  $\MEM[*][{addr+3}] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{3}$ \;
+  $\MEM[*][{addri+3:addr}] \ASN \INDEX[32]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+}
+
+% -----------------------------------------------------------------------------
+
+\XCINSTR{xc.str.d}{rd, rs1, rs2}{
+  Store the least significant double word of an $\GPR$ register into memory.
+  If the effective address $addr$ is not double word aligned, 
+  the memory access {\em must} raise an exception in the same way
+  as the base ISA 
+  (e.g., per \VERB[RV]{sd}~\cite[Section 5.3]{SCARV:RV:ISA:I:17})
+  would.
+  Instruction exists on RV64 and RV128.
+}{
+  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $\MEM[*][{addr+7:addr}] \ASN \INDEX[64]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
 }
 
 % =============================================================================
