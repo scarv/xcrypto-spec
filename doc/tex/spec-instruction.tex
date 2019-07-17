@@ -270,7 +270,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.scatter.b}{rd, rs2, rs1}{
+\XCINSTR{xc.scatter.b}{rs3, rs1(rs2)}{
   Perform a ``scattered'' store of 
   four      bytes 
   from an $\GPR$ register
@@ -280,20 +280,24 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a      byte within an $\GPR$ register (the offset).
+
+  Only the low $32$-bits of source registers 
+  $\VERB[RV]{rs2}$ and $\VERB[RV]{rs3}$
+  are ever read.
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
   $addr_2                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{2}$ \;
   $addr_3                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{3}$ \;
-  $\MEM[*][addr_0  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
-  $\MEM[*][addr_1  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{1}$ \;
-  $\MEM[*][addr_2  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{2}$ \;
-  $\MEM[*][addr_3  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{3}$ \;
+  $\MEM[*][addr_0  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $\MEM[*][addr_1  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{1}$ \;
+  $\MEM[*][addr_2  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{2}$ \;
+  $\MEM[*][addr_3  ]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{3}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.scatter.h}{rd, rs2, rs1}{
+\XCINSTR{xc.scatter.h}{rs3, rs1(rs2)}{
   Perform a ``scattered'' store of 
   two  half-words
   from an $\GPR$ register
@@ -303,18 +307,22 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
+  
+  Only the low $32$-bits of source registers 
+  $\VERB[RV]{rs2}$ and $\VERB[RV]{rs3}$
+  are ever read.
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
-  $\MEM[*][addr_0+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
-  $\MEM[*][addr_0+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{1}$ \;
-  $\MEM[*][addr_1+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{2}$ \;
-  $\MEM[*][addr_1+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{3}$ \;
+  $\MEM[*][addr_0+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $\MEM[*][addr_0+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{1}$ \;
+  $\MEM[*][addr_1+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{2}$ \;
+  $\MEM[*][addr_1+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{3}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.gather.b}{rd, rs2, rs1}{
+\XCINSTR{xc.gather.b}{rd, rs1(rs2)}{
   Perform a  ``gathered''  load of 
   four      bytes 
   from memory 
@@ -324,6 +332,9 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a      byte within an $\GPR$ register (the offset).
+
+  The {\em high} bits of the destination register from $\XLEN$ to $32$
+  are zeroed.
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
@@ -337,7 +348,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.gather.h}{rd, rs2, rs1}{
+\XCINSTR{xc.gather.h}{rd, rs1(rs1)}{
   Perform a  ``gathered''  load of 
   two  half-words
   from memory 
@@ -347,6 +358,9 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
+
+  The {\em high} bits of the destination register from $\XLEN$ to $32$
+  are zeroed.
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
