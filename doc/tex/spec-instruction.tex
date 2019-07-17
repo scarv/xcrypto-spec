@@ -308,6 +308,9 @@ To ensure consistency, the instruction must adhere to the following rules
 % -----------------------------------------------------------------------------
 
 \XCINSTR{xc.bop}{crd, crs1, crs2, lut8}{
+
+{\bf TODO:} Sort out how this instruction is encoded.
+
   Compute each $1$-bit sub-word (i.e.,    bit) of an $\XCLEN$-bit result
   via application of a function
   \[
@@ -424,7 +427,7 @@ $
 $ 
 where the field bit width
 $
-\VERB[RV]{w} \in \SET{ 2, 4, 8, 16, 32}
+\VERB[RV]{w} \in \SET{ 2, 4, 8, 16}
 $ 
 is specified in the $\VERB[RV]{pw}$ field of the instruction encoding.
 As such, said encoding yields the following cases:
@@ -434,14 +437,10 @@ As such, said encoding yields the following cases:
 \begin{tabular}{@{}ccc@{}}
 \toprule
 Assembler Mnemonic & PW Value       & Bit Field Width \\ \midrule
-None               & \RADIX{000}{2} & Invalid         \\
-{\tt c }           & \RADIX{001}{2} & $2 $            \\
-{\tt n }           & \RADIX{010}{2} & $4 $            \\
-{\tt b }           & \RADIX{011}{2} & $8 $            \\
-{\tt h }           & \RADIX{100}{2} & $16$            \\
-{\tt w }           & \RADIX{101}{2} & $32$            \\
-None               & \RADIX{110}{2} & Invalid         \\
-None               & \RADIX{111}{2} & Invalid         \\ \bottomrule
+{\tt c }           & \RADIX{00}{2} & $2 $            \\
+{\tt n }           & \RADIX{01}{2} & $4 $            \\
+{\tt b }           & \RADIX{10}{2} & $8 $            \\
+{\tt h }           & \RADIX{11}{2} & $16$            \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -450,8 +449,8 @@ exception when encountered in an otherwise valid instruction.
 
 As concrete examples:
 \begin{itemize}
-\item {\tt xc.padd w, c0, c1, c2}
-    will add the two full 32-bit values in the source registers together.
+\item {\tt xc.padd b, c0, c1, c2}
+    will add the four pairs of coresponding bytes in c1 and c2.
 \item {\tt xc.padd h, c0, c1, c2} 
     will add corresponding halfwords.
 \item {\tt xc.psll b, c0, c1, c2} 
@@ -459,7 +458,7 @@ As concrete examples:
     $\XCR[*][{\VERB[RV]{crs1}}]$
     by the word value in
     $\XCR[*][{\VERB[RV]{crs2}}]$
-\item {\tt xc.prot.i n, c0, c1, 3} 
+\item {\tt xc.pror.i n, c0, c1, 3} 
     will rotate right all nibbles in
     $\XCR[*][{\VERB[RV]{crs1}}]$
     by the immediate value.
@@ -471,7 +470,7 @@ As concrete examples:
   Compute a   register-based packed addition, 
   implying $\odot = +$.
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{+}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -484,7 +483,7 @@ As concrete examples:
   Compute a   register-based packed subtraction, 
   implying $\odot = -$.
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{-}      \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -500,7 +499,7 @@ As concrete examples:
   each computed product
   (cf. \VERB[RV]{xc.pmul.h},   which captures the ``high'' half, or $w$ MSBs).
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -517,7 +516,7 @@ As concrete examples:
   each computed product
   (cf. \VERB[RV]{xc.pmul.l},   which captures the  ``low'' half, or $w$ LSBs).
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -534,7 +533,7 @@ As concrete examples:
   each computed product
   (cf. \VERB[RV]{xc.pclmul.h}, which captures the ``high'' half, or $w$ MSBs).
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -551,7 +550,7 @@ As concrete examples:
   each computed product
   (cf. \VERB[RV]{xc.pclmul.l}, which captures the  ``low'' half, or $w$ LSBs).
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\XCR[*][{\VERB[RV]{crs2}}]}{i}$ \;
@@ -574,7 +573,7 @@ As concrete examples:
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 .
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
@@ -596,7 +595,7 @@ As concrete examples:
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\LSH}   \VERB[RV]{cshamt}$ \;
@@ -618,7 +617,7 @@ As concrete examples:
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 .
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
@@ -640,7 +639,7 @@ As concrete examples:
   \INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} = 0 
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RSH}   \VERB[RV]{cshamt}$ \;
@@ -649,7 +648,7 @@ As concrete examples:
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.prot}{pw, crd, crs1, crs2}{
+\XCINSTR{xc.pror}{pw, crd, crs1, crs2}{
   Compute a   register-based packed right-rotate,
   implying $\odot = \RRT$.
   Keep in mind that
@@ -658,7 +657,7 @@ As concrete examples:
   \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \pmod{w} .
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\XCR[*][{\VERB[RV]{crd}}]}{i} \ASN \INDEX[w]{\XCR[*][{\VERB[RV]{crs1}}]}{i} \OP[w][u]{\RRT}             \XCR[*][{\VERB[RV]{crs2}}]    $ \;
@@ -667,7 +666,7 @@ As concrete examples:
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.prot.i}{pw, crd, crs1, cshamt}{
+\XCINSTR{xc.pror.i}{pw, crd, crs1, cshamt}{
   Compute an immediate-based packed right-rotate,
   implying $\odot = \RRT$.
   Keep in mind that
@@ -676,7 +675,7 @@ As concrete examples:
   \VERB[RV]{rtamt} \pmod{w} 
   $
 }{
-  $w = 2^{\VERB[RV]{pw}}$ \;
+  $w = 2^{\VERB[RV]{pw+1}}$ \;
   $n = \XCLEN / w$\;
   $\VERB[RV]{rtamt} = \VERB[RV]{cshamt}$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
@@ -919,6 +918,43 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 }
 
 % -----------------------------------------------------------------------------
+
+
+\subsubsection{SHA2 Instructions}
+\label{sec:spec:instruction:sha2}
+
+These instructions are designed to accelerate critical parts of the
+SHA2 round functions.
+
+\XCINSTR{xc.sha256.s0}{rd, rs1}{
+
+}{
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 7)\XOR(a \RRT 18) \XOR(a \RSH 3)$
+}
+
+\XCINSTR{xc.sha256.s1}{rd, rs1}{
+
+}{
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 17)\XOR(a \RRT 19) \XOR(a \RSH 10)$
+}
+
+\XCINSTR{xc.sha256.s2}{rd, rs1}{
+
+}{
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 2)\XOR(a \RRT 13) \XOR(a \RRT 22)$
+}
+
+\XCINSTR{xc.sha256.s3}{rd, rs1}{
+
+}{
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 6)\XOR(a \RRT 11) \XOR(a \RRT 25)$
+}
+
+% ----------------------------------------------------------------------------
 
 \subsubsection{Class-$3.2$: SHA3}
 \label{sec:spec:instruction:3:2}
