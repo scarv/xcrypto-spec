@@ -931,25 +931,23 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   \VERB[RV]{xc.aessub.decrot} &\mapsto& \VERB[RV]{mode} &=& 1 &,& \VERB[RV]{rot} &=& 1 \\
   \end{array}
   \]
-  $\VERB[RV]{mode}$ is encoded in the $\VERB[RV]{ca}$ field and
-  $\VERB[RV]{rot}$  is encoded in the $\VERB[RV]{cb}$ field.
 }{
   \eIf{$\VERB[RV]{mode} = 0$}{
-    $t_0                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0} )$ \;
-    $t_1                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs2}}]_{15 \RANGE  8} )$ \;
-    $t_2                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs1}}]_{23 \RANGE 16} )$ \;
-    $t_3                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24} )$ \;
+    $t_0 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0} )$ \;
+    $t_1 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs2}}]_{15 \RANGE  8} )$ \;
+    $t_2 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs1}}]_{23 \RANGE 16} )$ \;
+    $t_3 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}     ( \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24} )$ \;
   }{
-    $t_0                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0} )$ \;
-    $t_1                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs2}}]_{15 \RANGE  8} )$ \;
-    $t_2                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs1}}]_{23 \RANGE 16} )$ \;
-    $t_3                        \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24} )$ \;
+    $t_0 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0} )$ \;
+    $t_1 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs2}}]_{15 \RANGE  8} )$ \;
+    $t_2 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs1}}]_{23 \RANGE 16} )$ \;
+    $t_3 \ASN \SCOPE{\ID{AES}}{\ALG{S-box}}^{-1}( \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24} )$ \;
   }
   
   \eIf{$\VERB[RV]{rot}  = 0$}{
-    $\GPR[*][{\VERB[RV]{crd0}}] \ASN                                          t_3 \CONS t_2 \CONS t_1 \CONS t_0 $ \;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(t_3 \CONS t_2 \CONS t_1 \CONS t_0)} $ \;
   }{
-    $\GPR[*][{\VERB[RV]{crd0}}] \ASN                                          t_2 \CONS t_1 \CONS t_0 \CONS t_3 $ \;
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(t_2 \CONS t_1 \CONS t_0 \CONS t_3)} $ \;
   }
 }
 
@@ -971,22 +969,22 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   dedicated mnemonics st.
   \[
   \begin{array}{l c r@{\;}c@{\;}l@{\;}}
-  \VERB[RV]{xc.aesmix.enc}    &\mapsto& \VERB[RV]{mode} &=& 0                          \\
-  \VERB[RV]{xc.aesmix.dec}    &\mapsto& \VERB[RV]{mode} &=& 1                          \\
+  \VERB[RV]{xc.aesmix.enc}    &\mapsto& \VERB[RV]{mode} &=& 0 \\
+  \VERB[RV]{xc.aesmix.dec}    &\mapsto& \VERB[RV]{mode} &=& 1 \\
   \end{array}
   \]
-  $\VERB[RV]{mode}$ is encoded in the $\VERB[RV]{ca}$ field.
 }{
-    $t_0                        \ASN                                     \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0}  $ \;
-    $t_1                        \ASN                                     \GPR[*][{\VERB[RV]{rs1}}]_{15 \RANGE  8}  $ \;
-    $t_2                        \ASN                                     \GPR[*][{\VERB[RV]{rs2}}]_{23 \RANGE 16}  $ \;
-    $t_3                        \ASN                                     \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24}  $ \;
+    $t_0 \ASN \GPR[*][{\VERB[RV]{rs1}}]_{ 7 \RANGE  0}  $ \;
+    $t_1 \ASN \GPR[*][{\VERB[RV]{rs1}}]_{15 \RANGE  8}  $ \;
+    $t_2 \ASN \GPR[*][{\VERB[RV]{rs2}}]_{23 \RANGE 16}  $ \;
+    $t_3 \ASN \GPR[*][{\VERB[RV]{rs2}}]_{31 \RANGE 24}  $ \;
 
   \eIf{$\VERB[RV]{mode} = 0$}{
-    $\GPR[*][{\VERB[RV]{crd0}}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}     ( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
+    $result \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}     ( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
   }{
-    $\GPR[*][{\VERB[RV]{crd0}}] \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}^{-1}( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
+    $result \ASN \SCOPE{\ID{AES}}{\ALG{Mix-Column}}^{-1}( t_3 \CONS t_2 \CONS t_1 \CONS t_0 )$ \;
   }
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(result)}$\;
 }
 
 % -----------------------------------------------------------------------------
@@ -998,32 +996,64 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 These instructions are designed to accelerate critical parts of the
 SHA2 round functions.
 
-\XCINSTR{xc.sha256.s0}{rd, rs1}{
+The SHA256 instructions are available on RV32, RV64 and RV128.
+The SHA512 instructions are available on       RV64 and RV128.
 
+The exact part of the round function computed is exposed by dedicated
+mnemonics st.
+  \[
+  \begin{array}{l c r@{\;}c@{\;}l@{\;}}
+  \VERB[RV]{xc.sha256.s0}, \VERB[RV]{xc.sha512.s0} &\mapsto& \VERB[RV]{s} &=& 0 \\
+  \VERB[RV]{xc.sha256.s1}, \VERB[RV]{xc.sha512.s1} &\mapsto& \VERB[RV]{s} &=& 1 \\
+  \VERB[RV]{xc.sha256.s2}, \VERB[RV]{xc.sha512.s2} &\mapsto& \VERB[RV]{s} &=& 2 \\
+  \VERB[RV]{xc.sha256.s3}, \VERB[RV]{xc.sha512.s3} &\mapsto& \VERB[RV]{s} &=& 3 \\
+  \end{array}
+  \]
+
+\XCINSTR{xc.sha256}{.s\[0,1,2,3\] rd, rs1}{
+Compute parts of the SHA256 round function.
+Each operation works on $32$-bit variables and intermediate values.
+The result is zero-extended to \XLEN bits before being written back
+to $\GPR[*][{\VERB[RV]{rd}}]$.
+
+These instructions are available on RV32, RV64 and RV128.
 }{
-    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
-    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 7)\XOR(a \RRT 18) \XOR(a \RSH 3)$
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]_{31 \RANGE 0}$\;
+
+    \uIf{$s = 0$}{
+        $result \ASN (a \RRT  7) \XOR (a \RRT 18) \XOR (a \RSH  3)$ \;
+    }\uElseIf{$s = 1$}{
+        $result \ASN (a \RRT 17) \XOR (a \RRT 19) \XOR (a \RSH 10)$ \;
+    }\uElseIf{$s = 2$}{
+        $result \ASN (a \RRT  2) \XOR (a \RRT 13) \XOR (a \RRT 22)$ \;
+    }\uElseIf{$s = 3$}{
+        $result \ASN (a \RRT  6) \XOR (a \RRT 11) \XOR (a \RRT 25)$ \;
+    }
+
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(result)}$\;
 }
 
-\XCINSTR{xc.sha256.s1}{rd, rs1}{
+\XCINSTR{xc.sha512}{.s\[0,1,2,3\] rd, rs1}{
+Compute parts of the SHA512 round function.
+Each operation works on $64$-bit variables and intermediate values.
+The result is zero-extended to \XLEN bits before being written back
+to $\GPR[*][{\VERB[RV]{rd}}]$.
 
+These instructions are available on       RV64 and RV128.
 }{
-    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
-    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 17)\XOR(a \RRT 19) \XOR(a \RSH 10)$
-}
+    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]_{63 \RANGE 0}$\;
 
-\XCINSTR{xc.sha256.s2}{rd, rs1}{
+    \uIf{$s = 0$}{
+        $result \ASN (a \RRT  1) \XOR (a \RRT  8) \XOR (a \RSH  7)$ \;
+    }\uElseIf{$s = 1$}{
+        $result \ASN (a \RRT 19) \XOR (a \RRT 61) \XOR (a \RSH  6)$ \;
+    }\uElseIf{$s = 2$}{
+        $result \ASN (a \RRT 28) \XOR (a \RRT 34) \XOR (a \RRT 39)$ \;
+    }\uElseIf{$s = 3$}{
+        $result \ASN (a \RRT 14) \XOR (a \RRT 18) \XOR (a \RRT 41)$ \;
+    }
 
-}{
-    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
-    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 2)\XOR(a \RRT 13) \XOR(a \RRT 22)$
-}
-
-\XCINSTR{xc.sha256.s3}{rd, rs1}{
-
-}{
-    $a \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
-    $\GPR[*][{\VERB[RV]{rd}}] \ASN (a \RRT 6)\XOR(a \RRT 11) \XOR(a \RRT 25)$
+    $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(result)}$\;
 }
 
 % ----------------------------------------------------------------------------
