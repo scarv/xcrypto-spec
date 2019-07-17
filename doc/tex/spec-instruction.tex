@@ -1082,40 +1082,40 @@ in Appendix \REFSEC{sec:design:sha}.
 \XCINSTR{xc.sha3.xy}{rd, rs1, rs2, shamt}{
   Compute an index into the SHA3 state array.
 }{
-  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
-  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{2 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{2 \RANGE 0}$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN ( (   x       \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x1}{rd, rs1, rs2, shamt}{
   Compute an index into the SHA3 state array.
 }{
-  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
-  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{2 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{2 \RANGE 0}$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 1 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x2}{rd, rs1, rs2, shamt}{
   Compute an index into the SHA3 state array.
 }{
-  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
-  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{2 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{2 \RANGE 0}$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 2 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.x4}{rd, rs1, rs2, shamt}{
   Compute an index into the SHA3 state array.
 }{
-  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
-  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{2 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{2 \RANGE 0}$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN ( ( ( x + 4 ) \bmod 5 ) + 5 \cdot (                       y   \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
 \XCINSTR{xc.sha3.yx}{rd, rs1, rs2, shamt}{
   Compute an index into the SHA3 state array.
 }{
-  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{4 \RANGE 0}$ \;
-  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{4 \RANGE 0}$ \;
+  $x                        \ASN \GPR[*][{\VERB[RV]{rs1}}]_{2 \RANGE 0}$ \;
+  $y                        \ASN \GPR[*][{\VERB[RV]{rs2}}]_{2 \RANGE 0}$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN ( (   y       \bmod 5 ) + 5 \cdot ( ( 2 \cdot x + 3 \cdot y ) \bmod 5 ) ) \LSH \VERB[RV]{shamt}$ \;
 }
 
