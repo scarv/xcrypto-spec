@@ -764,7 +764,7 @@ and
 $2$ destination $\GPR$ registers,
 which demands some compromises wrt. the encoding used.
 In short, a compressed specification of the destination $\GPR$ registers is
-used, whereby a single encoded \VERB[RV]{crdm} field implies (or maps to) a 
+used, whereby a single encoded \VERB[RV]{rdm} field implies (or maps to) a 
 pair 
 $
 \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} }
@@ -780,19 +780,21 @@ b) $\VERB[RV]{rd2} = 1 \pmod{2}$
 Concretely then, this means
 \[
 \begin{array}{l@{\;}c@{\;}r c c@{\;}l@{\;}c@{\;}r@{\;}c@{\;}l@{\;}c@{\;}r@{\;}c}
-\VERB[RV]{crdm} &=& \RADIX{000}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  1 &,& \VERB[RV]{rd1} &=&  0 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{001}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  3 &,& \VERB[RV]{rd1} &=&  2 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{010}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  5 &,& \VERB[RV]{rd1} &=&  4 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{011}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  7 &,& \VERB[RV]{rd1} &=&  6 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{100}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  9 &,& \VERB[RV]{rd1} &=&  8 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{101}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 11 &,& \VERB[RV]{rd1} &=& 10 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{110}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 13 &,& \VERB[RV]{rd1} &=& 12 & ) \\
-\VERB[RV]{crdm} &=& \RADIX{111}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 15 &,& \VERB[RV]{rd1} &=& 14 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0000}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  1 &,& \VERB[RV]{rd1} &=&  0 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0001}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  3 &,& \VERB[RV]{rd1} &=&  2 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0010}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  5 &,& \VERB[RV]{rd1} &=&  4 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0011}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  7 &,& \VERB[RV]{rd1} &=&  6 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0100}{2} &\mapsto& ( & \VERB[RV]{rd2} &=&  9 &,& \VERB[RV]{rd1} &=&  8 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0101}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 11 &,& \VERB[RV]{rd1} &=& 10 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0110}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 13 &,& \VERB[RV]{rd1} &=& 12 & ) \\
+\VERB[RV]{rdm} &=& \RADIX{0111}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 15 &,& \VERB[RV]{rd1} &=& 14 & ) \\
+... \\
+\VERB[RV]{rdm} &=& \RADIX{1111}{2} &\mapsto& ( & \VERB[RV]{rd2} &=& 31 &,& \VERB[RV]{rd1} &=& 30 & ) \\
 \end{array}
 \]
 i.e.,
 \[
-\VERB[RV]{crdm} = x ~~\mapsto~~ \TUPLE{ \VERB[RV]{rd2} = x \CONS 1 , \VERB[RV]{rd1} = x \CONS 0 } ,
+\VERB[RV]{rdm} = x ~~\mapsto~~ \TUPLE{ \VERB[RV]{rd2} = x \CONS 1 , \VERB[RV]{rd1} = x \CONS 0 } ,
 \]
 noting
 $\TUPLE{ 1, 0 }$ and $\TUPLE{ 3, 2 }$ are deemed valid pairs,
@@ -817,13 +819,13 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   meaning the instruction acts as a word-oriented analogue of a full-adder.
   Note that, wrt. the encoding,
   $
-  \VERB[RV]{crdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
+  \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[64][u]{+}        \GPR[*][{\VERB[RV]{rs2}}] ) 
-                                                                \OP[64][u]{+} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
-  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{31 \RANGE  0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{64 \RANGE 32}$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[][u]{+}        \GPR[*][{\VERB[RV]{rs2}}] ) 
+                                                                \OP[][u]{+} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
 
 
@@ -841,13 +843,13 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   meaning the instruction acts as a word-oriented analogue of a full-subtractor.
   Note that, wrt. the encoding,
   $
-  \VERB[RV]{crdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
+  \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[64][u]{-}        \GPR[*][{\VERB[RV]{rs2}}] ) 
-                                                                \OP[64][u]{-} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}  $ \;
-  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{31 \RANGE  0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{64 \RANGE 32}$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[][u]{-}        \GPR[*][{\VERB[RV]{rs2}}] ) 
+                                                                \OP[][u]{-} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}  $ \;
+  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -863,12 +865,12 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   $\GPR[*][{\VERB[RV]{rd2}}]$.
   Note that, wrt. the encoding,
   $
-  \VERB[RV]{crdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
+  \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rd2}}] \CONS \GPR[*][{\VERB[RV]{rd1}}] ) \OP[64][u]{+} \GPR[*][{\VERB[RV]{rs1}}]$ \;
-  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{31 \RANGE  0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{64 \RANGE 32}$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rd2}}] \CONS \GPR[*][{\VERB[RV]{rd1}}] ) \OP[][u]{+} \GPR[*][{\VERB[RV]{rs1}}]$ \;
+  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -888,13 +890,13 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   is accumulated.
   Note that, wrt. the encoding,
   $
-  \VERB[RV]{crdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
+  \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[32][u]{ \times} \GPR[*][{\VERB[RV]{rs2}}] ) 
-                                                                \OP[64][u]{ +}      \GPR[*][{\VERB[RV]{rs3}}]$ \;
-  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{31 \RANGE  0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{64 \RANGE 32}$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[][u]{ \times} \GPR[*][{\VERB[RV]{rs2}}] ) 
+                                                                \OP[][u]{ +}      \GPR[*][{\VERB[RV]{rs3}}]$ \;
+  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
 
 % -----------------------------------------------------------------------------
