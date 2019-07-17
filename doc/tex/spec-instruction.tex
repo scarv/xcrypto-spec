@@ -311,7 +311,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 {\bf TODO:} Sort out how this instruction is encoded.
 
-  Compute each $1$-bit sub-word (i.e.,    bit) of an $\XCLEN$-bit result
+  Compute each $1$-bit sub-word (i.e.,    bit) of an $\XLEN$-bit result
   via application of a function
   \[
   f  : \SET{ 0, 1 }^3 \rightarrow \SET{ 0, 1 }
@@ -360,7 +360,7 @@ To ensure consistency, the instruction must adhere to the following rules
 % ----------------------------------------------------------------------------
 
 \XCINSTR{xc.lut}{rd, rs1, rs2, rs3}{
-  Compute each $4$-bit sub-word (i.e., nibble) of an $\XCLEN$-bit result
+  Compute each $4$-bit sub-word (i.e., nibble) of an $\XLEN$-bit result
   via application of a function
   \[
   f  : \SET{ 0, 1 }^4 \rightarrow \SET{ 0, 1 }^4
@@ -471,7 +471,7 @@ As concrete examples:
   implying $\odot = +$.
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{+}      \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
   }
@@ -484,7 +484,7 @@ As concrete examples:
   implying $\odot = -$.
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{-}      \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
   }
@@ -500,7 +500,7 @@ As concrete examples:
   (cf. \VERB[RV]{xc.pmul.h},   which captures the ``high'' half, or $w$ MSBs).
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
@@ -517,7 +517,7 @@ As concrete examples:
   (cf. \VERB[RV]{xc.pmul.l},   which captures the  ``low'' half, or $w$ LSBs).
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{ \times} \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
@@ -534,7 +534,7 @@ As concrete examples:
   (cf. \VERB[RV]{xc.pclmul.h}, which captures the ``high'' half, or $w$ MSBs).
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN t_{        w - 1 \RANGE 0}$ \;
@@ -551,7 +551,7 @@ As concrete examples:
   (cf. \VERB[RV]{xc.pclmul.l}, which captures the  ``low'' half, or $w$ LSBs).
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $t \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\otimes} \INDEX[w]{\GPR[*][{\VERB[RV]{rs2}}]}{i}$ \;
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN t_{2 \cdot w - 1 \RANGE w}$ \;
@@ -574,7 +574,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\LSH}             \GPR[*][{\VERB[RV]{rs2}}]    $ \;
   }
@@ -596,7 +596,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\LSH}   \VERB[RV]{cshamt}$ \;
   }
@@ -618,7 +618,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\RSH}             \GPR[*][{\VERB[RV]{rs2}}]    $ \;
   }
@@ -640,7 +640,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\RSH}   \VERB[RV]{cshamt}$ \;
   }
@@ -658,7 +658,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\RRT}             \GPR[*][{\VERB[RV]{rs2}}]    $ \;
   }
@@ -676,7 +676,7 @@ As concrete examples:
   $
 }{
   $w = 2^{\VERB[RV]{pw+1}}$ \;
-  $n = \XCLEN / w$\;
+  $n = \XLEN / w$\;
   $\VERB[RV]{rtamt} = \VERB[RV]{cshamt}$\;
   \For{$i = 0$ {\bf upto} $\VERB[RV]{n} - 1$}{
     $\INDEX[w]{\GPR[*][{\VERB[RV]{rd}}]}{i} \ASN \INDEX[w]{\GPR[*][{\VERB[RV]{rs1}}]}{i} \OP[w][u]{\RRT}   \VERB[RV]{rtamt}$ \;
@@ -785,9 +785,9 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 \XCINSTR{xc.macc.1}{(rd2, rd1), rs1      }{
   Compute a   register-based multi-precision (or ``long'') accumulation,
   with the
-  $\XCLEN$-bit addend
+  $\XLEN$-bit addend
   $\GPR[*][{\VERB[RV]{rs1}}]$
-  accumulated into a $( 2 \cdot \XCLEN )$-bit value formed by concatenating
+  accumulated into a $( 2 \cdot \XLEN )$-bit value formed by concatenating
   $\GPR[*][{\VERB[RV]{rd1}}]$
   and
   $\GPR[*][{\VERB[RV]{rd2}}]$.
@@ -805,15 +805,15 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
 
 \XCINSTR{xc.mmul.3}{(rd2, rd1), rs1, rs2, rs3}{
   Compute a   register-based multi-precision (or ``long'') multiply-accumulate:
-  the $\XCLEN$-bit multiplicands
+  the $\XLEN$-bit multiplicands
   $\GPR[*][{\VERB[RV]{rs1}}]$
   and
   $\GPR[*][{\VERB[RV]{rs2}}]$
-  are first used to form a $( 2 \cdot \XCLEN )$-bit product captured by
+  are first used to form a $( 2 \cdot \XLEN )$-bit product captured by
   $\GPR[*][{\VERB[RV]{rd1}}]$ (the LSBs)
   and
   $\GPR[*][{\VERB[RV]{rd2}}]$ (the MSBs),
-  into which the $\XCLEN$-bit addend
+  into which the $\XLEN$-bit addend
   $\GPR[*][{\VERB[RV]{rs3}}]$
   is accumulated.
   Note that, wrt. the encoding,
@@ -839,7 +839,7 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   {\tt SubBytes}~\cite[Section 5.1.1]{SCARV:FIPS:197}
   operation:
   this is applicable to a column-oriented implementation of AES, where
-  state (resp. round key) matrix columns are packed into $\XCLEN$-bit
+  state (resp. round key) matrix columns are packed into $32$-bit
   words.
   Note that, wrt. the encoding,
   $
@@ -889,7 +889,7 @@ $\TUPLE{ 2, 1 }$ is invalid because it violates the  odd-even'ness rule.
   {\tt MixColumns}~\cite[Section 5.1.3]{SCARV:FIPS:197}
   operations:
   this is applicable to a column-oriented implementation of AES, where
-  state (resp. round key) matrix columns are packed into $\XCLEN$-bit
+  state (resp. round key) matrix columns are packed into $32$-bit
   words.
   Note that, wrt. the encoding,
   $
