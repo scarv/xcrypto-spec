@@ -250,7 +250,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 \item {\em Some} memory accesses have the potential to raise an exception
       that cannot be predicted, even with a priori knowledge of $addr$;
-      examples include page or bus faults.  In such cases,
+      examples include page, protection or bus faults.  In such cases,
       a) update to 
          architectural state 
          {\em is not} permitted,
@@ -276,7 +276,7 @@ To ensure consistency, the instruction must adhere to the following rules
   from an $\GPR$ register
   into memory;
   for the $i$-th store, a base-offset style effective address is formed 
-  from a
+  from
                      a  $\GPR$ register (the   base)
   plus
   a      byte within an $\GPR$ register (the offset).
@@ -303,7 +303,7 @@ To ensure consistency, the instruction must adhere to the following rules
   from an $\GPR$ register
   into memory;
   for the $i$-th store, a base-offset style effective address is formed 
-  from a
+  from
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
@@ -314,10 +314,8 @@ To ensure consistency, the instruction must adhere to the following rules
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
-  $\MEM[*][addr_0+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
-  $\MEM[*][addr_0+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{1}$ \;
-  $\MEM[*][addr_1+0]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{2}$ \;
-  $\MEM[*][addr_1+1]                        \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{3}$ \;
+  $\MEM[*][addr_0+1:addr_0]                 \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $\MEM[*][addr_1+1:addr_1]                 \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{1}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -328,7 +326,7 @@ To ensure consistency, the instruction must adhere to the following rules
   from memory 
   into an $\GPR$ register;
   for the $i$-th  load, a base-offset style effective address is formed 
-  from a
+  from
                      a  $\GPR$ register (the   base)
   plus
   a      byte within an $\GPR$ register (the offset).
@@ -354,7 +352,7 @@ To ensure consistency, the instruction must adhere to the following rules
   from memory 
   into an $\GPR$ register;
   for the $i$-th  load, a base-offset style effective address is formed 
-  from a
+  from
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
@@ -364,10 +362,8 @@ To ensure consistency, the instruction must adhere to the following rules
 }{
   $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
   $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
-  $\INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{0} \ASN \MEM[*][addr_0+0]$ \;
-  $\INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{1} \ASN \MEM[*][addr_0+1]$ \;
-  $\INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{2} \ASN \MEM[*][addr_1+0]$ \;
-  $\INDEX[ 8]{\GPR[*][{\VERB[RV]{rd}}]}{3} \ASN \MEM[*][addr_1+1]$ \;
+  $\INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{0} \ASN \MEM[*][addr_0+1:addr_0]$ \;
+  $\INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{1} \ASN \MEM[*][addr_1+1:addr_1]$ \;
 }
 
 % =============================================================================
@@ -465,7 +461,7 @@ To ensure consistency, the instruction must adhere to the following rules
   $\GPR[*][{\VERB[RV]{rs2}}]$
   appropriately.
 }{
-  $f = \GPR[*][{\VERB[RV]{rs3}}] \CONS \GPR[*][{\VERB[RV]{rs2}}]$ \;
+  $f = \GPR[*][{\VERB[RV]{rs3}}]_{31\RANGE 0} \CONS \GPR[*][{\VERB[RV]{rs2}}]_{31\RANGE 0}$ \;
   $t \ASN 0$ \;
   \For{$i = 0$ {\bf upto}  $\XLEN/4$}{
     $\INDEX[4]{t}{i} \ASN f( \GPR[*][{\VERB[RV]{rs1}}] )$ \;
@@ -506,18 +502,15 @@ As such, said encoding yields the following cases:
 \centering
 \begin{tabular}{@{}ccc@{}}
 \toprule
-Assembler Mnemonic & PW Value       & Bit Field Width \\ \midrule
-{\tt c }           & \RADIX{00}{2} & $2 $            \\
-{\tt n }           & \RADIX{01}{2} & $4 $            \\
-{\tt b }           & \RADIX{10}{2} & $8 $            \\
-{\tt h }           & \RADIX{11}{2} & $16$            \\ \bottomrule
+Assembler Mnemonic & {\tt pw} Value & Bit Field Width \\ \midrule
+{\tt c }           & \RADIX{00}{2}  & $2 $            \\
+{\tt n }           & \RADIX{01}{2}  & $4 $            \\
+{\tt b }           & \RADIX{10}{2}  & $8 $            \\
+{\tt h }           & \RADIX{11}{2}  & $16$            \\ \bottomrule
 \end{tabular}
 \end{table}
 
-where cases marked invalid are reserved, and result in an invalid opcode
-exception when encountered in an otherwise valid instruction.
-
-As concrete examples:
+\noindent As concrete examples:
 \begin{itemize}
 \item {\tt xc.padd b, c0, c1, c2}
     will add the four pairs of coresponding bytes in c1 and c2.
@@ -857,21 +850,21 @@ in Appendix \REFSEC{sec:design:mpn}.
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.macc.1}{(rd2, rd1), rs1      }{
+\XCINSTR{xc.macc.1}{(rd2, rd1), rs2, rs1, rs3}{
   Compute a   register-based multi-precision (or ``long'') accumulation,
   with the
   $\XLEN$-bit addend
   $\GPR[*][{\VERB[RV]{rs1}}]$
   accumulated into a $( 2 \cdot \XLEN )$-bit value formed by concatenating
-  $\GPR[*][{\VERB[RV]{rd1}}]$
+  $\GPR[*][{\VERB[RV]{rs1}}]$
   and
-  $\GPR[*][{\VERB[RV]{rd2}}]$.
+  $\GPR[*][{\VERB[RV]{rs2}}]$.
   Note that, wrt. the encoding,
   $
   \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rd2}}] \CONS \GPR[*][{\VERB[RV]{rd1}}] ) \OP[][u]{+} \GPR[*][{\VERB[RV]{rs1}}]$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs3}}] \CONS \GPR[*][{\VERB[RV]{rs2}}] ) \OP[][u]{+} \GPR[*][{\VERB[RV]{rs1}}]$ \;
   $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
   $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
