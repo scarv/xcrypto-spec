@@ -7,7 +7,7 @@
 \label{sec:spec:instruction:1}
 
 
-\XCINSTR{xc.ldr.bu}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.bu}{rd, rs1(rs2)}{
   Load a      byte from memory
   into a  $\GPR$ register,
   zero extending to \XLEN bits.
@@ -19,7 +19,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.b}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.b}{rd, rs1(rs2)}{
   Load a      byte from memory
   into a  $\GPR$ register,
   sign extending to \XLEN bits.
@@ -31,7 +31,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.hu}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.hu}{rd, rs1(rs2)}{
   Load a  halfword from memory
   into a  $\GPR$ register,
   zero extending to \XLEN bits.
@@ -48,7 +48,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.h}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.h}{rd, rs1(rs2)}{
   Load a  halfword from memory
   into a  $\GPR$ register,
   sign extending to \XLEN bits.
@@ -65,7 +65,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.wu}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.wu}{rd, rs1(rs2)}{
   Load a      word from memory 
   into                         an $\GPR$ register,
   zero extending to \XLEN bits.
@@ -82,7 +82,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.w}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.w}{rd, rs1(rs2)}{
   Load a      word from memory 
   into                         an $\GPR$ register,
   sign extending to \XLEN bits.
@@ -99,7 +99,7 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.ldr.d}{rd, rs1, rs2}{
+\XCINSTR{xc.ldr.d}{rd, rs1(rs2)}{
   Load a double word from memory 
   into                         an $\GPR$ register,
   sign extending to \XLEN bits.
@@ -116,17 +116,17 @@
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.b}{rd, rs1, rs2}{
+\XCINSTR{xc.str.b}{rs3, rs1(rs2)}{
   Store the least significant byte of an $\GPR$ register into memory.
   Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addr  }] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+  $\MEM[*][{addr  }] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.h}{rd, rs1, rs2}{
+\XCINSTR{xc.str.h}{rs3, rs1(rs2)}{
   Store the least significant half-word of an $\GPR$ register into memory.
   If the effective address $addr$ is not half-word aligned, 
   the memory access {\em must} raise an exception in the same way
@@ -136,12 +136,12 @@
   Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addr+1:addr}] \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+  $\MEM[*][{addr+1:addr}] \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.w}{rd, rs1, rs2}{
+\XCINSTR{xc.str.w}{rs3, rs1(rs2)}{
   Store the least significant word of an $\GPR$ register into memory.
   If the effective address $addr$ is not      word aligned, 
   the memory access {\em must} raise an exception in the same way
@@ -151,12 +151,12 @@
   Instruction exists on RV32, RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addri+3:addr}] \ASN \INDEX[32]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+  $\MEM[*][{addri+3:addr}] \ASN \INDEX[32]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.str.d}{rd, rs1, rs2}{
+\XCINSTR{xc.str.d}{rs3, rs1(rs2)}{
   Store the least significant double word of an $\GPR$ register into memory.
   If the effective address $addr$ is not double word aligned, 
   the memory access {\em must} raise an exception in the same way
@@ -166,7 +166,7 @@
   Instruction exists on RV64 and RV128.
 }{
   $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addr+7:addr}] \ASN \INDEX[64]{\GPR[*][{\VERB[RV]{rd}}]}{0}$ \;
+  $\MEM[*][{addr+7:addr}] \ASN \INDEX[64]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % =============================================================================
