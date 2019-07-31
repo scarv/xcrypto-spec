@@ -307,13 +307,15 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
+  Note that the offset amounts from $\VERB[RV]{rs2}$ are automatically
+  halfword aligned by the instruction.
   
   Only the low $32$-bits of source registers 
   $\VERB[RV]{rs2}$ and $\VERB[RV]{rs3}$
   are ever read.
 }{
-  $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
-  $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
+  $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0} \LSH 1)$ \;
+  $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1} \LSH 1)$ \;
   $\MEM[*][addr_0+1:addr_0]                 \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
   $\MEM[*][addr_1+1:addr_1]                 \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{1}$ \;
 }
@@ -356,12 +358,14 @@ To ensure consistency, the instruction must adhere to the following rules
                      a  $\GPR$ register (the   base)
   plus
   a half-word within an $\GPR$ register (the offset).
+  Note that the offset amounts from $\VERB[RV]{rs2}$ are automatically
+  halfword aligned by the instruction.
 
   The {\em high} bits of the destination register from $\XLEN$ to $32$
   are zeroed.
 }{
-  $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0}$ \;
-  $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + \INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1}$ \;
+  $addr_0                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{0} \LSH 1)$ \;
+  $addr_1                                   \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\INDEX[16]{\GPR[*][{\VERB[RV]{rs2}}]}{1} \LSH 1)$ \;
   $\INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{0} \ASN \MEM[*][addr_0+1:addr_0]$ \;
   $\INDEX[16]{\GPR[*][{\VERB[RV]{rd}}]}{1} \ASN \MEM[*][addr_1+1:addr_1]$ \;
 }
