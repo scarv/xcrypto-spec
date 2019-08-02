@@ -2,17 +2,17 @@ BUILD = ${REPO_HOME}/build/doc
 
 include ${REPO_HOME}/extern/texmf/make/image.mk
 
-ALL_OPCODES = ${REPO_HOME}/extern/riscv-opcodes/opcodes \
+ALL_OPCODES = ${REPO_HOME}/extern/riscv-opcodes/opcodes-xcrypto \
+              ${REPO_HOME}/extern/riscv-opcodes/opcodes \
               ${REPO_HOME}/extern/riscv-opcodes/opcodes-b \
               ${REPO_HOME}/extern/riscv-opcodes/opcodes-rvc \
               ${REPO_HOME}/extern/riscv-opcodes/opcodes-rvv \
-              ${REPO_HOME}/extern/riscv-opcodes/opcodes-xcrypto
 
 XC_OPCODES  = ${REPO_HOME}/extern/riscv-opcodes/opcodes-shared \
               ${REPO_HOME}/extern/riscv-opcodes/opcodes-xcrypto
 
 ${BUILD}/doc.ise : ${XC_OPCODES}
-	cat ${ALL_OPCODES} | python3 ${REPO_HOME}/extern/riscv-opcodes/parse-opcodes -xcrypto-tex > /dev/null
+	cat ${ALL_OPCODES} | python3 ${REPO_HOME}/extern/riscv-opcodes/parse-opcodes -c > /dev/null
 	cat ${^} | python3 ${REPO_HOME}/extern/riscv-opcodes/parse-opcodes -xcrypto-tex > ${@}
 
 ${BUILD}/doc.pdf : ./doc.tex $(wildcard ./tex/*) ${IMAGE_TARGETS} ${BUILD}/doc.ise
