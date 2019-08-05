@@ -899,6 +899,14 @@ in Appendix \REFSEC{sec:design:mpn}.
   $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
 
+\XCINSTR{xc.mror}{(rd2, rd1), rs1, rs2, rs3}{
+  Compute a register-based double-width right rotate.
+}{
+  $t \ASN (\GPR[*][{\VERB[RV]{rs1}}] \CONS \GPR[*][{\VERB[RV]{rs2}}]) \RRT \GPR[*][{\VERB[RV]{rs3}}] $\;
+  $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
+}
+
 % -----------------------------------------------------------------------------
 
 
