@@ -825,7 +825,7 @@ in Appendix \REFSEC{sec:design:mpn}.
   $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[][u]{+}        \GPR[*][{\VERB[RV]{rs2}}] ) 
                                                                 \OP[][u]{+} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
   $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{      \XLEN               }$ \;
 }
 
 
@@ -849,12 +849,12 @@ in Appendix \REFSEC{sec:design:mpn}.
   $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \OP[][u]{-}        \GPR[*][{\VERB[RV]{rs2}}] ) 
                                                                 \OP[][u]{-} \INDEX{\GPR[*][{\VERB[RV]{rs3}}]}{0}  $ \;
   $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
-  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
+  $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{      \XLEN               }$ \;
 }
 
 % -----------------------------------------------------------------------------
 
-\XCINSTR{xc.macc.1}{(rd2, rd1), rs2, rs1, rs3}{
+\XCINSTR{xc.macc.1}{(rd2, rd1), rs1, rs2, rs3}{
   Compute a   register-based multi-precision (or ``long'') accumulation,
   with the
   $\XLEN$-bit addend
@@ -868,7 +868,7 @@ in Appendix \REFSEC{sec:design:mpn}.
   \VERB[RV]{rdm} \mapsto \TUPLE{ \VERB[RV]{rd2}, \VERB[RV]{rd1} } .
   $
 }{
-  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs3}}] \CONS \GPR[*][{\VERB[RV]{rs2}}] ) \OP[][u]{+} \GPR[*][{\VERB[RV]{rs1}}]$ \;
+  $t                          \ASN ( \GPR[*][{\VERB[RV]{rs1}}] \CONS \GPR[*][{\VERB[RV]{rs2}}] ) \OP[][u]{+} \GPR[*][{\VERB[RV]{rs3}}]$ \;
   $\GPR[*][{\VERB[RV]{rd1}}] \ASN \INDEX{t}{      \XLEN-1 \RANGE     0}$ \;
   $\GPR[*][{\VERB[RV]{rd2}}] \ASN \INDEX{t}{2\cdot\XLEN   \RANGE \XLEN}$ \;
 }
