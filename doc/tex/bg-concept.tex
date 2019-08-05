@@ -14,56 +14,15 @@
          or
       c) software-only
       techniques.
+
       The remit of \XCID is strictly focused on an approach that supports the
       latter techniques; one could view said remit as focused on maximising
-      the viability of software-based cryptographic implementations.
-
-% TODO: Link to appendix FAQ on general v.s. special purpose ISE meaning.
-\item \XCID is best described as a general-purpose cryptographic ISE, and so
-      specified along those lines.  However, the implementation of \XCID is
-      left more open-ended: one could consider approaches including
-      a) a highly   invasive extension to an existing host core,
-      b) a somewhat invasive, tightly-coupled co-processor,
-         or
-      c) a      non-invasive, loosely-coupled co-processor.
-
-\item All cited implementation approaches are viable, but, in {\em concept},
-      we view \XCID as a co-processor technology: wlog. we adopt associated
-      terminology from here onward.  Phrased as such, \XCID has an implicit
-      focus on micro-controller class host cores, although the concept and 
-      utility is broader.
-
-      By adopting this perspective, we aim to present a clean(er) separation 
-      between the intended roles of the host core and \XCID co-processor.
-      For example, at a high level one could view the co-processor as being 
-      tasked with support for execution of cryptography; such a task is then
-      not expected of the host core.  Along the same lines, the host core 
-      would be tasked with orchestrating control-flow, off-loading computation 
-      to the co-processor: wrt. cryptographic workloads, one could view the
-      former as a general-purpose control-path for a (more) special-purpose 
-      data-path represented by the latter.  Finally, note that considering
-      physically separate (or at least separatable) implementations offers
-      the potential to use differing technologies; one motivation for this 
-      could be the (selected) use of a secure logic style 
-      (see, e.g.,~\cite{SCARV:MayMur:16})
-      and thus design concepts such as PowerTrust~\cite{SCARV:TilKirSze:10}.
-
-\item Consider, for example and in a general sense, ARM {\sf big.LITTLE}
-      (an instance of the general Asymmetric Multi-core Processor (AMP)~\cite{SCARV:Mittal:16} concept),
-      which can be viewed as combining and switching between
-      use of
-      a ``big''    core (which delivers efficiency wrt. instruction throughput)
-      and 
-      a ``little'' core (which delivers efficiency wrt. energy consumption).
-      The underlying goal is to capitalise on the characteristics of each as 
-      and when need be (at run-time), vs. a single core which represents a 
-      (design-time) compromise between those characteristics.  Along similar 
-      lines, one could imagine some form of {\sf efficient.SECURE} analogue: 
-      we have a 
-      an ``efficient'' core (which ignores   security, focusing on delivery of efficiency)
-      and
-      a  ``secure''    core (which ignores efficiency, focusing on delivery of   security),
-      instantiated by the host core and \XCID co-processor respectively.
+      the viability of software-based cryptographic implementations.  It has
+      an implicit focus on constrained, e.g., micro-controller class, cores, 
+      although the concept and utility is broader.
+      Various published work is emerging that morivates evidences the value 
+      of this approach: 
+      see, e.g.,~\cite{SCARV:Stoffelen:19}.
 
 \item The following design criteria rationalise this approach, some of which
       are related (or even stem directly from one and other):
@@ -89,14 +48,10 @@
             a) deviation from the existing instruction encoding formats,
                and 
             b) introduction of additional state.
-            % TODO: "Where we have deviated from RISC-V norms, we have
-            %        justified these decisions in Appendix X"
       \item {\bf       Generality}.
-            Bar some controlled instances, \XCID endeavours to avoid including
-            any (overly) functionality-specific features (and, therefore, any
-            associated hardware).
-            % TODO: again, "where we have included niche or specific
-            %       functionality, we justify it accordingly..."
+            \XCID should be a general-purpose cryptographic ISE: bar certain
+            controlled (i.e., well motivated) instances, it avoids including 
+            (overly) functionality-specific features.
       \item {\bf      Flexibility}. 
             Modulo the status of security as a first-class design metric, a
             goal of \XCID remains to avoid, or at least minimise any ``baked 
@@ -141,21 +96,21 @@
             interesting benchmark kernels.
       \end{itemize}
 
-\item Aligning with several cited design criteria, \XCID can be viewed as a
-      form of {\em meta}-extension in the sense it captures feature classes
+\item Aligning with several cited design criteria, \XCID can be viewed as a 
+      form of {\em meta}-extension in the sense it captures feature classes 
       that can be selected from to suit.  \REFSEC{sec:bg:feature} outlines 
       said feature classes, the presence or absence of which is reflected 
       in an associated CSR outlined in \REFSEC{sec:spec:state:csr}.
 
 \item All that said, such an approach may naturally be deemed inappropriate 
-      for some use-cases; we carefully pitch \XCID as {\em an} approach, not 
-      {\em the} approach.  
-      Along these lines, note that instances of the {\em opposite} approach
-      naturally exist as alternatives.  For example,
+      for some use-cases due to the trade-offs implied; we carefully pitch 
+      \XCID as {\em an} approach, not {\em the} approach.  
+      As such, instances of alternative approaches will naturally exist and
+      be perfectly valid.  For example,
       a) the RISC-V Cryptographic Extensions Task Group is focused on use 
          of the vector ISE as a vehicle for cryptographic operations,
       b) many commercialised SoCs 
-         (e.g., Google Titan, Rambus CryptoManager) 
+         (e.g., Google Titan) 
          prefer to couple a dedicated, special-purpose IP core 
          (e.g., a hardware-based AES accelerator) 
          to a RISC-V host core.
