@@ -429,7 +429,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 % ----------------------------------------------------------------------------
 
-\XCINSTR{xc.lut}{rd, rs1, rs2, rs3}{
+\XCINSTR{xc.lut}{rd, rs1, rs2}{
   Compute each $4$-bit sub-word (i.e., nibble) of an $\XLEN$-bit result
   via application of a function
   \[
@@ -465,10 +465,10 @@ To ensure consistency, the instruction must adhere to the following rules
   $\GPR[*][{\VERB[RV]{rs2}}]$
   appropriately.
 }{
-  $f = \GPR[*][{\VERB[RV]{rs3}}]_{31\RANGE 0} \CONS \GPR[*][{\VERB[RV]{rs2}}]_{31\RANGE 0}$ \;
+  $f = \GPR[*][{\VERB[RV]{rs1}}]_{31\RANGE 0} \CONS \GPR[*][{\VERB[RV]{rs2}}]_{31\RANGE 0}$ \;
   $t \ASN 0$ \;
   \For{$i = 0$ {\bf upto}  $\XLEN/4$}{
-    $\INDEX[4]{t}{i} \ASN f( \GPR[*][{\VERB[RV]{rs1}}] )$ \;
+    $\INDEX[4]{t}{i} \ASN f( \INDEX[4]{\GPR[*][{\VERB[RV]{rd}}]}{i})$ \;
   }
   $\GPR[*][{\VERB[RV]{rd}}] \ASN t$ \;
 }
