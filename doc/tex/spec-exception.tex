@@ -1,4 +1,4 @@
-\subsection{\XCID exceptions}
+\subsection{\XCRYPTO exceptions}
 \label{sec:spec:exceptions}
 
 % =============================================================================
@@ -8,12 +8,12 @@ semantics in \REFSEC{sec:spec:instruction}, with general cases captured in
 the following:
 
 \begin{itemize}
-\item Any attempt to execute an \XCID instruction which
+\item Any attempt to execute an \XCRYPTO instruction which
       has a    valid opcode but at least one invalid operand,
       will raise an 
       illegal instruction exception.
 \item Any attempt to execute a
-        valid \XCID instruction
+        valid \XCRYPTO instruction
       from an unsupported feature class (or parameterisation thereof, cf. packed operations, per fields in $\SPR{mxcsr}$)
       will raise an 
       illegal instruction exception.

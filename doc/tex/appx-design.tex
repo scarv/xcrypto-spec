@@ -10,8 +10,8 @@
 
 \begin{description}
 
-\item[Is there any logic behind the \XCID instruction mnemonics?]
-      \XCID instruction mnemonics follow a (somewhat) consistent scheme; 
+\item[Is there any logic behind the \XCRYPTO instruction mnemonics?]
+      \XCRYPTO instruction mnemonics follow a (somewhat) consistent scheme; 
       they all include a domain-separating prefix \VERB[RV]{xc}, and, if
       need be, a suffix intended to identify specific variants.  These 
       include
@@ -28,7 +28,7 @@
       \end{array}
       \]
 
-\item[What restrictions exist wrt. the \XCID memory interface?]
+\item[What restrictions exist wrt. the \XCRYPTO memory interface?]
       Although they share a memory interface, there is no requirement for
       the host core and co-processor to share an address space.  Indeed,
       it is easy to imagine cases where using disjoint address spaces is
@@ -161,7 +161,7 @@ implicitly reading their destination registers.
 
     \item[xc.mmul.3] \hfill
 
-        \begin{lstlisting}[frame=single,title=XCrypto,numbers=left]
+        \begin{lstlisting}[frame=single,title=XCRYPTOrypto,numbers=left]
         xc.mmul.3   (rd2,rd1), rs1, rs2, rs3 // Note, rd2 = rd1 | 0x1
         \end{lstlisting}
 
@@ -175,7 +175,7 @@ implicitly reading their destination registers.
 
     \item[xc.macc.1] \hfill
 
-        \begin{lstlisting}[frame=single,title=XCrypto,numbers=left]
+        \begin{lstlisting}[frame=single,title=XCRYPTOrypto,numbers=left]
         xc.macc.1 (rd2,rd1), rs1, rs2, rs3 // Note, rd2 = rd1 | 0x1
         \end{lstlisting}
 
@@ -187,7 +187,7 @@ implicitly reading their destination registers.
 
     \item[xc.madd.3] \hfill
 
-        \begin{lstlisting}[frame=single,title=XCrypto,numbers=left]
+        \begin{lstlisting}[frame=single,title=XCRYPTOrypto,numbers=left]
         madd3   (rd2,rd1), rs1, rs2, rs3 // Note, rd2 = rd1 | 0x1
         \end{lstlisting}
 
@@ -201,7 +201,7 @@ implicitly reading their destination registers.
 
     \item[xc.msub3] \hfill
 
-        \begin{lstlisting}[frame=single,title=XCrypto,numbers=left]
+        \begin{lstlisting}[frame=single,title=XCRYPTOrypto,numbers=left]
         msub3   (rd2,rd1), rs1, rs2, rs3 // Note, rd2 = rd1 | 0x1
         \end{lstlisting}
 
@@ -220,13 +220,13 @@ implicitly reading their destination registers.
 % --------------
 
 \item[Why include the special purpose SHA instructions?]
-      While \XCID tries to include only {\em general purpose} instructions and
+      While \XCRYPTO tries to include only {\em general purpose} instructions and
       avoid overly specific instructions, in some cases it deviates from this:
 
       \noindent SHA3, and the underlying Keccak round function:
       \begin{itemize}
       \item While the compute elements of Keccak are well supported by other
-            \XCID instructions (and other proposals in the literature), there
+            \XCRYPTO instructions (and other proposals in the literature), there
             is considerable latent complexity in generating indices into
             the state matrix.
             This complexity is removed by unrolling the loops and

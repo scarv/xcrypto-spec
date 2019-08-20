@@ -5,14 +5,14 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.ldr.b}
-\XCENCODE{xc.ldr.h}
-\XCENCODE{xc.ldr.bu}
-\XCENCODE{xc.ldr.hu}
-\XCENCODE{xc.ldr.w}
-\XCENCODE{xc.str.b}
-\XCENCODE{xc.str.h}
-\XCENCODE{xc.str.w}
+\XCRYPTOENCODE{xc.ldr.b}
+\XCRYPTOENCODE{xc.ldr.h}
+\XCRYPTOENCODE{xc.ldr.bu}
+\XCRYPTOENCODE{xc.ldr.hu}
+\XCRYPTOENCODE{xc.ldr.w}
+\XCRYPTOENCODE{xc.str.b}
+\XCRYPTOENCODE{xc.str.h}
+\XCRYPTOENCODE{xc.str.w}
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $1$,   per \REFSEC{sec:spec:instruction:1}.}
@@ -26,9 +26,9 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.rngtest}       
-\XCENCODE{xc.rngseed}       
-\XCENCODE{xc.rngsamp}       
+\XCRYPTOENCODE{xc.rngtest}       
+\XCRYPTOENCODE{xc.rngseed}       
+\XCRYPTOENCODE{xc.rngsamp}       
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.1$, per \REFSEC{sec:spec:instruction:2:1}.}
@@ -42,10 +42,10 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.scatter.b}     
-\XCENCODE{xc.scatter.h}     
-\XCENCODE{xc.gather.b}      
-\XCENCODE{xc.gather.h}      
+\XCRYPTOENCODE{xc.scatter.b}     
+\XCRYPTOENCODE{xc.scatter.h}     
+\XCRYPTOENCODE{xc.gather.b}      
+\XCRYPTOENCODE{xc.gather.h}      
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.2$, per \REFSEC{sec:spec:instruction:2:2}.}
@@ -59,8 +59,8 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.bop}
-\XCENCODE{xc.lut}
+\XCRYPTOENCODE{xc.bop}
+\XCRYPTOENCODE{xc.lut}
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.3$, per \REFSEC{sec:spec:instruction:2:3}.}
@@ -74,18 +74,18 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}                                                            
 \\
-\XCENCODE{xc.padd}          
-\XCENCODE{xc.psub}          
-\XCENCODE{xc.pmul.l}        
-\XCENCODE{xc.pmul.h}        
-\XCENCODE{xc.pclmul.l}      
-\XCENCODE{xc.pclmul.h}      
-\XCENCODE{xc.psll}          
-\XCENCODE{xc.psll.i}        
-\XCENCODE{xc.psrl}          
-\XCENCODE{xc.psrl.i}        
-\XCENCODE{xc.pror}          
-\XCENCODE{xc.pror.i}        
+\XCRYPTOENCODE{xc.padd}          
+\XCRYPTOENCODE{xc.psub}          
+\XCRYPTOENCODE{xc.pmul.l}        
+\XCRYPTOENCODE{xc.pmul.h}        
+\XCRYPTOENCODE{xc.pclmul.l}      
+\XCRYPTOENCODE{xc.pclmul.h}      
+\XCRYPTOENCODE{xc.psll}          
+\XCRYPTOENCODE{xc.psll.i}        
+\XCRYPTOENCODE{xc.psrl}          
+\XCRYPTOENCODE{xc.psrl.i}        
+\XCRYPTOENCODE{xc.pror}          
+\XCRYPTOENCODE{xc.pror.i}        
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.4$, per \REFSEC{sec:spec:instruction:2:4}.}
@@ -99,11 +99,11 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.madd.3}        
-\XCENCODE{xc.msub.3}        
-\XCENCODE{xc.macc.1}        
-\XCENCODE{xc.mmul.3}        
-\XCENCODE{xc.mror}          
+\XCRYPTOENCODE{xc.madd.3}        
+\XCRYPTOENCODE{xc.msub.3}        
+\XCRYPTOENCODE{xc.macc.1}        
+\XCRYPTOENCODE{xc.mmul.3}        
+\XCRYPTOENCODE{xc.mror}          
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $2.5$, per \REFSEC{sec:spec:instruction:2:5}.}
@@ -117,8 +117,8 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.aessub}        
-\XCENCODE{xc.aesmix}        
+\XCRYPTOENCODE{xc.aessub}        
+\XCRYPTOENCODE{xc.aesmix}        
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $3.1$, per \REFSEC{sec:spec:instruction:3:1}.}
@@ -131,10 +131,10 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.sha256.s0}
-\XCENCODE{xc.sha256.s1}
-\XCENCODE{xc.sha256.s2}
-\XCENCODE{xc.sha256.s3}
+\XCRYPTOENCODE{xc.sha256.s0}
+\XCRYPTOENCODE{xc.sha256.s1}
+\XCRYPTOENCODE{xc.sha256.s2}
+\XCRYPTOENCODE{xc.sha256.s3}
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $3.2$, per \REFSEC{sec:spec:instruction:3:2}.}
@@ -147,11 +147,11 @@
 \begin{bytefield}[bitwidth={1.2em},endianness={big}]{32}
 \bitheader{0-31}            
 \\
-\XCENCODE{xc.sha3.xy}
-\XCENCODE{xc.sha3.x1}
-\XCENCODE{xc.sha3.x2}
-\XCENCODE{xc.sha3.x4}
-\XCENCODE{xc.sha3.yx}
+\XCRYPTOENCODE{xc.sha3.xy}
+\XCRYPTOENCODE{xc.sha3.x1}
+\XCRYPTOENCODE{xc.sha3.x2}
+\XCRYPTOENCODE{xc.sha3.x4}
+\XCRYPTOENCODE{xc.sha3.yx}
 \end{bytefield}
 \end{center}
 \caption{An overview of instruction encoding: class $3.3$, per \REFSEC{sec:spec:instruction:3:3}.}

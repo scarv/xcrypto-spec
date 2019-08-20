@@ -5,10 +5,29 @@
 
 \begin{itemize}
 
+\item \XCRYPTO is a 
+      non-standard extension~\cite[Section 21.1]{SCARV:RV:ISA:I:17},
+      in the sense it {\em may} conflict with other 
+      (non-standard {\em or} standard)
+      extensions.  In particular, note that
+
+      \begin{itemize}
+      \item the 
+            instruction encodings
+            do not have a domain-separating prefix, i.e., \XCRYPTO is a
+            brownfield extension~\cite[Section 21.1]{SCARV:RV:ISA:I:17}
+            wrt. the base ISA,
+            whereas
+      \item the 
+            instruction mnemonics 
+            do     have a domain-separating prefix:
+            for example, \VERB[RV]{foo} is captured as \VERB[RV]{xc.foo}.
+      \end{itemize}
+
 \item Per the current list\footnote{
       See, e.g., \url{http://workspace.riscv.org}
       } of (public) RISC-V working groups, 
-      \XCID relates to elements of (at least) the following:
+      \XCRYPTO relates to elements of (at least) the following:
 
       \begin{enumerate}
       \item Cryptographic Extensions Task Group,
@@ -21,21 +40,6 @@
       In some cases overlap exists, potentially representing an opportunity
       for unification; in other cases the underlying goal, approach, and/or
       ethos is distinct and thus incompatible.
-
-\item Several features of \XCID are intended to avoid conflicts with existing 
-      or future extensions:
-
-      \begin{itemize}
-      \item the instruction encoding is constrained to the 
-            \RVCUSTOM{1}~\cite[Table 19.1]{SCARV:RV:ISA:I:17}
-            space, i.e., a $25$-bit space with prefix $\RADIX{0101011}{2}$,
-      \item all instruction mnemonics include a domain-separating prefix,
-            meaning, for example, \VERB[RV]{foo} becomes \VERB[RV]{xc.foo}.
-      \end{itemize}
-      
-      \noindent
-      Note that these should be considered flexible placeholders: they can
-      be changed to suit future constraints with little or no impact.
 
 \end{itemize}
 
