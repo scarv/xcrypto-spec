@@ -377,49 +377,38 @@ To ensure consistency, the instruction must adhere to the following rules
 
 % -----------------------------------------------------------------------------
 
-\XCRYPTOINSTR{xc.bop}{rd, rs1, rs2, lut8}{
-
-{\bf TODO:} Sort out how this instruction is encoded.
-
+\XCRYPTOINSTR{xc.bop}{rd, rs1, rs2, l}{
   Compute each $1$-bit sub-word (i.e.,    bit) of an $\RVXLEN$-bit result
   via application of a function
   \[
   f  : \SET{ 0, 1 }^3 \rightarrow \SET{ 0, 1 }
   \]
-  encoded as a truth-table via immediate \VERB[RV]{lut8} st.
+  encoded as a truth-table via the
+  $\SPR{uxcrypto.b0}$ or $\SPR{uxcrypto.b1}$
+  CSR fields,
+  selected using the $\VERB[RV]{l}$ input
   \[
-  f( i ) = \INDEX{\VERB[RV]{lut8}}{i}
+  f( i ) = \INDEX{\SPR{uxcrypto.b[l]}}{i}
   \]
-  for $0 \leq i <  8$;
-  the  input to said function is read    from (the               $1$-bit sub-words of) three $\GPR$ registers,
+  for $0 \leq i <  8$.
+  The  input to said function is read    from (the               $1$-bit sub-words of) three $\GPR$ registers,
   and 
   the output                  is written to   (the corresponding $1$-bit sub-word  of) an    $\GPR$ register.
   For example, if
-  $\VERB[RV]{lut8} = \RADIX{11110000}{2}$
+  $\SPR{uxcrypto.b[l]} = \RADIX{11110000}{2}$
   then
   $f( \RADIX{000}{2} ) = \RADIX{0}{2}$,
   $f( \RADIX{011}{2} ) = \RADIX{0}{2}$,
   $f( \RADIX{100}{2} ) = \RADIX{1}{2}$,
   and
   $f( \RADIX{111}{2} ) = \RADIX{1}{2}$.
-  Note that
-  \VERB[RV]{xc.bop}
-  allows synthesis of a wider set of functionality;
-  for example, it can be used to synthesise 
-  standard Boolean instructions in the base ISA
-  \[
-  \begin{array}{l@{\;}c@{\;}l c l@{\;}c@{\;}l}
-  \VERB[RV]{lut8} &=& \RADIX{10001000}{2} &\Longrightarrow& f &=& x \AND y \\
-  \VERB[RV]{lut8} &=& \RADIX{11101110}{2} &\Longrightarrow& f &=& x \IOR y \\
-  \VERB[RV]{lut8} &=& \RADIX{01100110}{2} &\Longrightarrow& f &=& x \XOR y \\
-  \VERB[RV]{lut8} &=& \RADIX{11101000}{2} &\Longrightarrow& f &=& (x \AND y) \IOR ((x \IOR y) \AND z)
-  \end{array}
-  \]
-  by padding 
-  \VERB[RV]{lut8} 
-  appropriately.
+
+  See \REFSEC{sec:spec:state:csr} for more information on the
+  CSR register containing the
+  $\SPR{uxcrypto.b0}$ and $\SPR{uxcrypto.b1}$
+  CSR fields.
 }{
-  $f = \VERB[RV]{imm8}$ \;
+  $f = \SPR{uxcrypto.b[l]}$ \;
   $t \ASN 0$ \;
   \For{$i = 0$ {\bf upto} $31$} {
     $\INDEX  {t}{i} \ASN f( \INDEX{\GPR[*][{\VERB[RV]{rd}}]}{i} \CONS \INDEX{\GPR[*][{\VERB[RV]{rs1}}]}{i} \CONS \INDEX{\GPR[*][{\VERB[RV]{rs2}}]}{i} )$ \;
@@ -429,7 +418,7 @@ To ensure consistency, the instruction must adhere to the following rules
 
 % ----------------------------------------------------------------------------
 
-\XCRYPTOINSTR{xc.lut}{rd, rs1, rs2, rs3}{
+\XCRYPTOINSTR{xc.lut}{rd, rs1, rs2}{
   Compute each $4$-bit sub-word (i.e., nibble) of an $\RVXLEN$-bit result
   via application of a function
   \[
@@ -465,7 +454,7 @@ To ensure consistency, the instruction must adhere to the following rules
   $\GPR[*][{\VERB[RV]{rs2}}]$
   appropriately.
 }{
-  $f = \GPR[*][{\VERB[RV]{rs3}}]_{31\RANGE 0} \CONS \GPR[*][{\VERB[RV]{rs2}}]_{31\RANGE 0}$ \;
+  $f = \GPR[*][{\VERB[RV]{rs1}}]_{31\RANGE 0} \CONS \GPR[*][{\VERB[RV]{rs2}}]_{31\RANGE 0}$ \;
   $t \ASN 0$ \;
   \For{$i = 0$ {\bf upto}  $\RVXLEN/4$}{
     $\INDEX[4]{t}{i} \ASN f( \GPR[*][{\VERB[RV]{rs1}}] )$ \;
