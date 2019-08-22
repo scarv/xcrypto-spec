@@ -24,8 +24,8 @@
   sign extending to \RVXLEN bits.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr}])}$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] +   \GPR[*][{\VERB[RV]{rs2}}]         $ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{       addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -41,8 +41,8 @@
   would.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 1)$ \;
-  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(\MEM[*][{addr+1:addr}])}$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 1 )$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0  }{(\MEM[*][{addr+1:addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -58,7 +58,7 @@
   would.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 1)$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 1 )$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+1:addr}])}$ \;
 }
 
@@ -75,8 +75,8 @@
   would.
   Instruction exists on RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 2)$ \;
-  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0}{(\MEM[*][{addr+3:addr}])}$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 2 )$ \;
+  $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{0  }{(\MEM[*][{addr+3:addr}])}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -92,7 +92,7 @@
   would.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 2)$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 2 )$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+3:addr}])}$ \;
 }
 
@@ -109,7 +109,7 @@
   would.
   Instruction exists on RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 3)$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 3 )$ \;
   $\GPR[*][{\VERB[RV]{rd}}] \ASN \EXT{\pm}{(\MEM[*][{addr+7:addr}])}$ \;
 }
 
@@ -119,8 +119,8 @@
   Store the least significant byte of an $\GPR$ register into memory.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + \GPR[*][{\VERB[RV]{rs2}}]$ \;
-  $\MEM[*][{addr  }] \ASN \INDEX[8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] +   \GPR[*][{\VERB[RV]{rs2}}]         $ \;
+  $\MEM[*][{       addr}] \ASN \INDEX[ 8]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -134,7 +134,7 @@
   would.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 1)$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 1 )$ \;
   $\MEM[*][{addr+1:addr}] \ASN \INDEX[16]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
@@ -149,8 +149,8 @@
   would.
   Instruction exists on RV32, RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 2)$ \;
-  $\MEM[*][{addri+3:addr}] \ASN \INDEX[32]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 2 )$ \;
+  $\MEM[*][{addr+3:addr}] \ASN \INDEX[32]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
 % -----------------------------------------------------------------------------
@@ -164,7 +164,7 @@
   would.
   Instruction exists on RV64 and RV128.
 }{
-  $addr  \ASN \GPR[*][{\VERB[RV]{rs1}}] + (\GPR[*][{\VERB[RV]{rs2}}] \LSH 3)$ \;
+  $addr \ASN \GPR[*][{\VERB[RV]{rs1}}] + ( \GPR[*][{\VERB[RV]{rs2}}] \LSH 3 )$ \;
   $\MEM[*][{addr+7:addr}] \ASN \INDEX[64]{\GPR[*][{\VERB[RV]{rs3}}]}{0}$ \;
 }
 
