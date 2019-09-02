@@ -262,6 +262,58 @@ implicitly reading their destination registers.
             small compared to the benefits the instructions provide.
       \end{itemize}
 
+\item[What is the rationale behind the {\em leakage fence} instructions?]
+    \label{sec:design:analog-leakage}
+
+    There are two main motivations behind these instructions:
+
+    \begin{itemize}
+
+    \item
+    Localisation of leakage sources.
+    Writing side-channel resistant code is a very time consuming exercise.
+    The programmer often does not have full control over the aspects of
+    a CPU which cause leakage.
+    By exposing a level of control to the programmer over various
+    pieces of micro-architectural state, we hope to make the localisation
+    problem much easier.
+
+    \item
+    Mitigation of leakage.
+    Having localised a source of leakage, the next logical step is to
+    remove or minimise it.
+    This capability comes ``{\em for free}" with the ability to localise
+    its source.
+
+    \end{itemize}
+
+    The control over which micro-architectural resources are updated
+    is also important for energy efficiency.
+    Many un-expected sources of leakage can be traced to registers which
+    are only updated under certain circumstances.
+    While one could update a register every cycle, this would be extremely
+    energy intensive, hence implementers often clock-gate registers.
+    We do not want to undermine this sort of energy optimisation by
+    including the instructions, hence the degree of control required.
+    Likewise, it is also possible that clearing some state unnecessarily
+    might also cause leakage.
+
+    Separate configure and fence instructions were chosen in order to be
+    more efficient with instruction encoding space.
+    The alternative would have been an instruction with a large immediate
+    to pick which resources were modified.
+
+    A dedicated register for the configuration was chosen over a CSR in
+    order to makeimplementations simpler:
+
+    \begin{itemize}
+    \item The semantics of the CSR registers would over-complicate an
+    implementation.
+
+    \item Controlling micro-architectural state from architectural
+    resources blurs the otherwise well defined abstraction boundaries.
+    \end{itemize}
+
 \end{description}
 
 % =============================================================================

@@ -170,6 +170,149 @@
 
 % =============================================================================
 
+\XCRYPTOINSTR{xc.alsetcfg}{rs1}{
+  This instruction
+  (read as {\em analog leakage set configuration})
+  is used in conjunction with the \VERB[RV]{xc.alfence} instruction.
+  It works to configure which micro-architectural state is updated
+  when the \VERB[RV]{xc.alfence} instruction is executed.
+  Some design rationale for this instruction can be found in
+  \REFSEC{sec:design:analog-leakage}.
+
+  \begin{itemize}
+
+  \item
+  When executed, the instruction reads a single source register
+  (\VERB[RV]{rs1}) and writes it to an otherwise invisible
+  XLEN-wide configuration register called \VERB[RV]{alcfg}.
+
+  \item
+  Each bit of \VERB[RV]{alcfg} is an
+  {\em implementation defined} enable bit,
+  controlling some piece of micro-architectural state.
+
+  \item
+  When an \VERB[RV]{xc.alfence} instruction is subsequently executed,
+  it checks each bit of the \VERB[RV]{alcfg} register.
+  If a bit is set, then the corresponding piece of micro-architectural
+  state it controls is updated as per the functionality of
+  \VERB[RV]{xc.alfence}.
+
+  \end{itemize}
+
+  An example mapping of configuration bits for the \VERB[RV]{alcfg}
+  register might look like:
+
+  \begin{table}[H]
+  \centering
+  \begin{tabular}{@{}cl@{}}
+  \toprule
+  Bit    & Micro-architectural state element \\ \midrule
+  $31:10$ & Not-implemented                   \\
+  $    9$ & SRAM 1 Bus Data Register          \\
+  $    8$ & SRAM 0 Bus Data Register          \\
+  $    7$ & Pipeline Result registers         \\
+  $    6$ & Pipeline Operand register 3       \\
+  $    5$ & Pipeline Operand register 2       \\
+  $    4$ & Pipeline Operand register 1       \\
+  $    3$ & AES Accelerator internal state    \\
+  $    2$ & Multiplier Accumulate Register    \\
+  $    1$ & Store Buffer                      \\
+  $    0$ & Load Buffer                       \\ \bottomrule
+  \end{tabular}
+  \end{table}
+
+  Note that the configuration bits can control state inside and
+  outside the CPU core.
+
+  It is required that the implementer document the behaviour of
+  every bit of the \VERB[RV]{alcfg} register.
+  
+  For implementations unconcerned with power/EM side-channel leakage,
+  it is valid for \VERB[RV]{xc.alsetcfg} to be implemented as
+  a $NOP$.
+}{
+    $\VERB[RV]{alcfg} \ASN \GPR[*][{\VERB[RV]{rs1}}]$\;
+}
+
+\XCRYPTOINSTR{xc.alfence}{}{
+  This instruction
+  (read as {\em analog leakage fence})
+  is used in conjunction with the \VERB[RV]{xc.alsetcfg} instruction.
+  It acts as a {\em leakage barrier} between instructions.
+  Concretely, execution of instructions {\em after} a leakage barrier
+  should leak minimal information about instructions executed {\em before}
+  the leakage barrier.
+  Some design rationale for this instruction can be found in
+  \REFSEC{sec:design:analog-leakage}.
+
+  \begin{itemize}
+
+  \item
+  When executed, the instruction checks the value of each bit in the
+  \VERB[RV]{alcfg} register.
+
+  \item
+  Each bit corresponds to a re-setable piece of micro-architectural
+  state (e.g. a pipeline register field, load/store buffer, 
+  multiply-accumulate register).
+
+  \item
+  If a bit is set, the corresponding piece of state is altered according to
+  the implementation flavours defined below.
+
+  \item
+  A programmer can hence use the 
+  \VERB[RV]{xc.alsetcfg}
+  and
+  \VERB[RV]{xc.alfence}
+  instructions to {\em localise and mitigate} power and EM based sources of
+  side-channel leakage.
+  By allowing the programmer to control which micro-architectural state
+  is updated, can also improve energy efficiency over simply updating
+  all of the register on every leakage fence instruction.
+
+  \end{itemize}
+
+  In terms of implementation, there are three flavours of this instruction:
+
+  \begin{itemize}
+
+  \item[Strong:]
+
+    A strong implementation will (pseudo-)randomise the value of any
+    micro-architectural registers, thus mitigating
+    both hamming weight and hamming distance leakage.
+    A strong implementation does not need to use a different
+    pseudo-random value for each register it affects.
+  
+  \item[Weak:]
+    
+    A weak implementation will clear (i.e. set to zero) any
+    micro-architectural registers.
+    This mitigates hamming distance leakage but leaves open the
+    possibility of hamming weight leakage, while also being cheaper
+    to implement.
+
+  \item[Inert:]
+
+    An implementation which is not concerned with such side-channel leakage
+    may implement this instruction as a \VERB[RV]{nop} with no
+    micro-architectural side effects.
+
+  \end{itemize}
+
+  Platforms should identify which flavour of the instruction is implemented.
+
+  {\bf Note:} Micro-architectural information leakage due to higher level
+  constructs such as caches, branch predictors, TLBs, load/store buffers and
+  functional unit multiplexing are beyond the scope of this instruction.
+}{
+    $NOP$\;
+}
+
+% =============================================================================
+
 \subsubsection{Class-$2.1$: randomness}
 \label{sec:spec:instruction:2:1}
 
